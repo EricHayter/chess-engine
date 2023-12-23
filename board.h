@@ -2,6 +2,8 @@
 #define BOARD_H
 
 #include <cstdint>
+#include <array>
+#include <tuple>
 
 enum class PieceType {
     Bishop,
@@ -10,13 +12,13 @@ enum class PieceType {
     Pawn,
     Queen,
     Rook,
-    None,
+    None, // empty slots
 };
 
 enum class Color {
     White,
     Black,
-    None,
+    None, // empty slots
 };
 
 struct Piece {
@@ -24,19 +26,7 @@ struct Piece {
     Color color;
 };
 
-struct Board {
-    uint64_t Bbishop;
-    uint64_t Bking;   
-    uint64_t Bknight;
-    uint64_t Bpawn;
-    uint64_t Bqueen;
-    uint64_t Brook;
-    uint64_t Wbishop;
-    uint64_t Wking;   
-    uint64_t Wknight;
-    uint64_t Wpawn;
-    uint64_t Wqueen;
-    uint64_t Wrook;
-};
+using Board = std::array<std::array<Piece, 8> ,8>; // type alias for boards
+using Coordinate = std::tuple<int, int>;
 
 #endif

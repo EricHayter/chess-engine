@@ -1,32 +1,42 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include <cstdint>
-#include <array>
-#include <tuple>
+#include <stdint.h>
 
-enum class PieceType {
-    Bishop,
-    King,
-    Knight,
-    Pawn,
-    Queen,
-    Rook,
-    None, // empty slots
+enum PieceType {
+    BISHOP,
+    KING,
+    KNIGHT,
+    PAWN,
+    QUEEN,
+    ROOK,
+    EMPTY, 
 };
 
-enum class Color {
-    White,
-    Black,
-    None, // empty slots
+enum Color {
+    WHITE,
+    BLACK,
+    NONE, // empty slots
 };
 
 struct Piece {
-    PieceType type;
-    Color color;
+    enum PieceType type;
+    enum Color color;
 };
 
-using Board = std::array<std::array<Piece, 8> ,8>; // type alias for boards
-using Coordinate = std::tuple<int, int>;
+struct Board {
+    uint64_t wKing;
+    uint64_t wQueen;
+    uint64_t wBishop;
+    uint64_t wKnight;
+    uint64_t wRook;
+    uint64_t wPawn;
+    uint64_t bKing;
+    uint64_t bQueen;
+    uint64_t bBishop;
+    uint64_t bKnight;
+    uint64_t bRook;
+    uint64_t bPawn;
+};
 
 #endif

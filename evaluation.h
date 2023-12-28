@@ -1,9 +1,10 @@
 #ifndef EVALUATION_H
 #define EVALUATION_H
 
+#include <stdint.h>
 #include "board.h"
 
-double positionCoefficient(const PieceType& pt, const uint8_t pos);
-double evaluate(const Board& board);
+double positionCoefficient(enum PieceType pt, enum Color clr, uint8_t pos);
+double evaluate(struct Board* board);
 
 #endif

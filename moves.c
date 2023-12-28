@@ -1,4 +1,3 @@
-#include <vector>
 #include "board.h"
 
 std::vector<Coordinate> validMoves(const Board &b, const Coordinate &c) {

@@ -1,8 +1,11 @@
 #include "board.h"
+// #include "arraylist.h"
 
-std::vector<Coordinate> validMoves(const Board &b, const Coordinate &c) {
+
+ArrayList validMoves(Board b, uint8_t pos) {
   std::vector<Coordinate> moves{};
-  int row = std::get<0>(c);
+  uint8_t NUM_ROWS = 8;
+  uint8_t row = pos / NUM_ROWS;
   int col = std::get<1>(c);
   Piece piece {b[row][col]};
 

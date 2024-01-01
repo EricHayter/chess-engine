@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-enum PieceType {
+typedef enum PieceType {
     BISHOP,
     KING,
     KNIGHT,
@@ -11,20 +11,15 @@ enum PieceType {
     QUEEN,
     ROOK,
     EMPTY, 
-};
+} PieceType;
 
-enum Color {
+typedef enum {
     WHITE,
     BLACK,
     NONE, // empty slots
-};
+} Color;
 
-struct Piece {
-    enum PieceType type;
-    enum Color color;
-};
-
-struct Board {
+typedef struct {
     uint64_t wKing;
     uint64_t wQueen;
     uint64_t wBishop;
@@ -37,6 +32,6 @@ struct Board {
     uint64_t bKnight;
     uint64_t bRook;
     uint64_t bPawn;
-};
+} Board;
 
 #endif

@@ -2,6 +2,8 @@
 #include "arraylist.h"
 #include "board.h"
 
+// pseudo-legal move generation (don't care about checks)
+
 ArrayList *validMoves(Board *board) {
   // generate a list of possible moves in a given position
   ArrayList *moves = arraylist_create();

@@ -2,8 +2,20 @@
 #define BOARD_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
-#define ROW 8
+#define NORTH 8
+#define NORTH_EAST 9
+#define EAST 1
+#define SOUTH_EAST -7
+#define SOUTH -8
+#define SOUTH_WEST -9
+#define WEST -1
+#define NORTH_WEST 7
+
+// TODO define files for the boarders
+// 50 move draws
+// castle should include both colors
 
 typedef enum {
     BISHOP,
@@ -22,18 +34,22 @@ typedef enum {
 } Color;
 
 typedef struct {
-    uint8_t wKing;
-    uint8_t wQueen;
-    uint8_t wBishop;
-    uint8_t wKnight;
-    uint8_t wRook;
-    uint8_t wPawn;
-    uint8_t bKing;
-    uint8_t bQueen;
-    uint8_t bBishop;
-    uint8_t bKnight;
-    uint8_t bRook;
-    uint8_t bPawn;
+    Color Turn;
+    bool castleKSide;        // Can castle on king side
+    bool castleQSide;        // Can castle of queen side
+    uint64_t doublePawnMove; // location of pawn that moved 2 squares
+    uint64_t wKing;
+    uint64_t wQueen;
+    uint64_t wBishop;
+    uint64_t wKnight;
+    uint64_t wRook;
+    uint64_t wPawn;
+    uint64_t bKing;
+    uint64_t bQueen;
+    uint64_t bBishop;
+    uint64_t bKnight;
+    uint64_t bRook;
+    uint64_t bPawn;
 } Board;
 
 typedef struct {

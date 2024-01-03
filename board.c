@@ -3,6 +3,8 @@
 
 const Piece EMPTYSQUARE = {NONE_TYPE, NONE_COLOR};
 
+
+
 int is_piece_equal(const Piece *piece1, const Piece *piece2) {
   // checks for equality of two pieces (irrespective of position on the board)
   return (piece1->pieceType == piece2->pieceType) &

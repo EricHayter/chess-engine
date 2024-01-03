@@ -1,27 +1,23 @@
 #include "evaluation.h"
 
-#include "board.h"
-#include <stdint.h>
-
-#define WHITE_WIN 9999
-#define BLACK_WIN 9999
-
-double positionCoefficient(enum PieceType pt, enum Color clr, uint8_t pos) {
+double positionCoefficient(PieceType pt, Color clr, uint8_t pos) {
   // use this to improve the evaluation function later
   // figure out later what is playing optimally
   // pieces are more useful at certain squares
   return 1.0;
 }
 
-double evaluate(struct Board* board) {
+double evaluate(Board *board) {
   // in favor of white (> 0)
   // in favor of black (< 0)
   // equal (= 0)
   double evaluation = 0.0;
 
   // if the kings aren't on the board you lose -/+ infinity
-  if (board->bKing == 0) return WHITE_WIN;
-  if (board->wKing == 0) return BLACK_WIN;
+  if (board->bKing == 0)
+    return WHITE_WIN;
+  if (board->wKing == 0)
+    return BLACK_WIN;
 
   for (uint8_t i = 0; i < sizeof(uint64_t); i++) {
     // pawns

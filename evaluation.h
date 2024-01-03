@@ -1,10 +1,13 @@
 #ifndef EVALUATION_H
 #define EVALUATION_H
 
-#include <stdint.h>
 #include "board.h"
+#include <stdint.h>
 
-double positionCoefficient(enum PieceType pt, enum Color clr, uint8_t pos);
-double evaluate(struct Board* board);
+#define WHITE_WIN 9999 // TODO maybe choose a better value
+#define BLACK_WIN 9999
+
+double positionCoefficient(PieceType pt, Color clr, uint8_t pos);
+double evaluate(Board* board);
 
 #endif

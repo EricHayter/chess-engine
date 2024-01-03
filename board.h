@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define ROW 8
+
 typedef enum {
     BISHOP,
     KING,
@@ -20,24 +22,26 @@ typedef enum {
 } Color;
 
 typedef struct {
-    uint64_t wKing;
-    uint64_t wQueen;
-    uint64_t wBishop;
-    uint64_t wKnight;
-    uint64_t wRook;
-    uint64_t wPawn;
-    uint64_t bKing;
-    uint64_t bQueen;
-    uint64_t bBishop;
-    uint64_t bKnight;
-    uint64_t bRook;
-    uint64_t bPawn;
+    uint8_t wKing;
+    uint8_t wQueen;
+    uint8_t wBishop;
+    uint8_t wKnight;
+    uint8_t wRook;
+    uint8_t wPawn;
+    uint8_t bKing;
+    uint8_t bQueen;
+    uint8_t bBishop;
+    uint8_t bKnight;
+    uint8_t bRook;
+    uint8_t bPawn;
 } Board;
 
 typedef struct {
     PieceType pieceType;
     Color color;
 } Piece;
+
+int is_piece_equal(const Piece* piece1, const Piece* piece2);
 
 extern const Piece EMPTY;
 

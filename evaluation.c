@@ -1,4 +1,8 @@
 #include "evaluation.h"
+#include "board.h"
+#include <stdio.h>
+
+#include "moves.h"
 
 double positionCoefficient(PieceType pt, Color clr, uint8_t pos) {
   // use this to improve the evaluation function later
@@ -52,4 +56,12 @@ double evaluate(Board *board) {
   }
 
   return evaluation;
+}
+
+int inRange(int8_t pos) {
+    return (pos < 64) && (pos >= 0);
+}
+
+int main() {
+    bitboard_print(get_bishop_moves(1));
 }

@@ -1,9 +1,8 @@
 #include "board.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 const Piece EMPTYSQUARE = {NONE_TYPE, NONE_COLOR};
-
-
 
 int is_piece_equal(const Piece *piece1, const Piece *piece2) {
   // checks for equality of two pieces (irrespective of position on the board)
@@ -29,6 +28,15 @@ Board *copy_board(const Board *board) {
   return new_board;
 }
 
+void bitboard_print(BitBoard board) {
+    for (int i = 0; i < 64; i++) {
+        printf("%lu", (board >> i) & 1);
+        if (i % 8 == 7)
+            printf("\n");
+    }
+}
+
+
 Board *move_piece(const Board *board, Piece *piece, uint8_t prev,
                   uint8_t next) {
   // crates a new bit board representation after the moving of a piece given
@@ -38,7 +46,7 @@ Board *move_piece(const Board *board, Piece *piece, uint8_t prev,
     return NULL;
 
   Board *new_board = copy_board(board);
-  uint8_t *bitboard;
+  uint64_t *bitboard;
   switch (piece->pieceType) {
   case KING: {
     if (piece->color == WHITE)

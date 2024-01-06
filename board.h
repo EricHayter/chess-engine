@@ -17,13 +17,17 @@
 // 50 move draws
 // castle should include both colors
 
+typedef uint64_t BitBoard;
+
+void bitboard_print(BitBoard board);
+
 typedef enum {
-    BISHOP,
-    KING,
-    KNIGHT,
-    PAWN,
-    QUEEN,
-    ROOK,
+    KING = 0,
+    QUEEN = 1,
+    BISHOP = 2,
+    KNIGHT = 3,
+    ROOK = 4,
+    PAWN = 5,
     NONE_TYPE
 } PieceType;
 
@@ -37,19 +41,19 @@ typedef struct {
     Color Turn;
     bool castleKSide;        // Can castle on king side
     bool castleQSide;        // Can castle of queen side
-    uint64_t doublePawnMove; // location of pawn that moved 2 squares
-    uint64_t wKing;
-    uint64_t wQueen;
-    uint64_t wBishop;
-    uint64_t wKnight;
-    uint64_t wRook;
-    uint64_t wPawn;
-    uint64_t bKing;
-    uint64_t bQueen;
-    uint64_t bBishop;
-    uint64_t bKnight;
-    uint64_t bRook;
-    uint64_t bPawn;
+    BitBoard doublePawnMove; // location of pawn that moved 2 squares
+    BitBoard wKing;
+    BitBoard wQueen;
+    BitBoard wBishop;
+    BitBoard wKnight;
+    BitBoard wRook;
+    BitBoard wPawn;
+    BitBoard bKing;
+    BitBoard bQueen;
+    BitBoard bBishop;
+    BitBoard bKnight;
+    BitBoard bRook;
+    BitBoard bPawn;
 } Board;
 
 typedef struct {

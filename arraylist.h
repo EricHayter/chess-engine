@@ -16,12 +16,12 @@ typedef struct {
 } ArrayList;
 
 ArrayList* arraylist_create();
-void destroy_list(ArrayList* list);
-int push(ArrayList* list, void* element);
-void* pop(ArrayList* list);
-void* get(ArrayList* list, uint32_t idx);
-void set(ArrayList* list, uint32_t idx, void* element);
-void insert(ArrayList* list, uint32_t idx, void* element);
-void* remove(ArrayList* list, uint32_t idx);
+void arraylist_destroy(ArrayList* list);
+int arraylist_push(ArrayList* list, void* element);
+void* arraylist_pop(ArrayList* list);
+void* arraylist_get(ArrayList* list, uint32_t idx);
+void arraylist_set(ArrayList* list, uint32_t idx, void* element);
+void arraylist_insert(ArrayList* list, uint32_t idx, void* element);
+void* arraylist_remove(ArrayList* list, uint32_t idx);
 
 #endif

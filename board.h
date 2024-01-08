@@ -22,13 +22,13 @@ typedef uint64_t BitBoard;
 void bitboard_print(BitBoard board);
 
 typedef enum {
-    KING = 0,
-    QUEEN = 1,
-    BISHOP = 2,
-    KNIGHT = 3,
-    ROOK = 4,
-    PAWN = 5,
-    NONE_TYPE
+    KING,
+    QUEEN,
+    BISHOP,
+    KNIGHT,
+    ROOK,
+    PAWN,
+    NONE_TYPE,
 } PieceType;
 
 typedef enum {

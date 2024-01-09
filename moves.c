@@ -9,7 +9,7 @@
 //     Piece *occupant = isOccupied(board, pos);
 //     if (is_piece_equal(occupant, &EMPTY))
 //       continue;
-// 
+//
 //     switch (occupant->pieceType) {
 //     case BISHOP: {
 //       ArrayList *bishop_moves = bishopMoves(board, pos);
@@ -31,7 +31,7 @@
 //     default:
 //       break;
 //     }
-// 
+//
 //   case KING: {
 //     if ((row + 1 < 8) & (b[row + 1][col].color != piece.color))
 //       moves.push_back(Coordinate{row + 1, col});
@@ -83,7 +83,7 @@
 //     if ((row - 1 >= 0 & col - 2 >= 0) &
 //         (b[row - 1][col - 2].color != piece.color))
 //       moves.push_back(Coordinate{row - 1, col - 2});
-// 
+//
 //     break;
 //   }
 //   case PieceType::Pawn: {
@@ -95,7 +95,7 @@
 //         moves.push_back(Coordinate{row, col + 2});
 //       }
 //     }
-// 
+//
 //     if (piece.type == Collor::Black) {
 //     }
 //     break;
@@ -166,10 +166,10 @@
 //       if (p.color == Color::None)
 //         break;
 //     }
-// 
+//
 //     break;
 //   }
-// 
+//
 //   case PieceType::Rook: {
 //     Piece p{};
 //     for (int i{1}; i < (8 - col); i++) { // this is fishy
@@ -204,72 +204,78 @@
 //       if (p.color == Color::None)
 //         break;
 //     }
-// 
+//
 //     break;
 //   }
-// 
+//
 //   case PieceType::None:
 //     break;
 //   }
-// 
+//
 //   return moves;
 // }
-// 
+//
 // Piece *isOccupied(const Board *board, uint8_t pos) {
 //   if ((board->bBishop >> pos) && 1)
 //     return &((Piece){BISHOP, BLACK});
 //   if ((board->wBishop >> pos) && 1)
 //     return &((Piece){BISHOP, WHITE});
-// 
+//
 //   if ((board->bKing >> pos) && 1)
 //     return &((Piece){KING, BLACK});
 //   if ((board->wKing >> pos) && 1)
 //     return &((Piece){KING, WHITE});
-// 
+//
 //   if ((board->bKnight >> pos) && 1)
 //     return &((Piece){KNIGHT, BLACK});
 //   if ((board->wKnight >> pos) && 1)
 //     return &((Piece){KNIGHT, WHITE});
-// 
+//
 //   if ((board->bPawn >> pos) && 1)
 //     return &((Piece){PAWN, BLACK});
 //   if ((board->wPawn >> pos) && 1)
 //     return &((Piece){PAWN, WHITE});
-// 
+//
 //   if ((board->bQueen >> pos) && 1)
 //     return &((Piece){QUEEN, BLACK});
 //   if ((board->wQueen >> pos) && 1)
 //     return &((Piece){QUEEN, WHITE});
-// 
+//
 //   if ((board->bRook >> pos) && 1)
 //     return &((Piece){ROOK, BLACK});
 //   if ((board->wRook >> pos) && 1)
 //     return &((Piece){ROOK, WHITE});
-// 
+//
 //   return &EMPTY; // empty spot on board
 // }
 
 // FORGET ABOUT THE OPTIMIZATIONS JUST MAKE SOMETHING THAT WORKS!
 
-BitBoard get_bishop_moves(uint8_t current_pos) {
-    // returns a bitboard of the possible moves a bishop can make on an empty board
+BitBoard get_bishop_moves(uint8_t current_pos)
+{
+    // returns a bitboard of the possible moves a bishop can make on an empty
+    // board
     BitBoard board = 0;
-    for (uint8_t i = current_pos + NORTH_EAST; i < 64; i += NORTH_EAST) {
+    for (uint8_t i = current_pos + NORTH_EAST; i < 64; i += NORTH_EAST)
+    {
         if (i % 8 == 0) // stop after cycle
             break;
         board += 1 << i;
     }
-    for (uint8_t i = current_pos + SOUTH_EAST; i < 64; i += SOUTH_EAST) {
+    for (uint8_t i = current_pos + SOUTH_EAST; i < 64; i += SOUTH_EAST)
+    {
         if (i % 8 == 0) // stop after cycle
             break;
         board += 1 << i;
     }
-    for (uint8_t i = current_pos + NORTH_WEST; i < 64; i += NORTH_WEST) {
+    for (uint8_t i = current_pos + NORTH_WEST; i < 64; i += NORTH_WEST)
+    {
         if (i % 7 == 0)
             break;
         board += 1 << i;
     }
-    for (uint8_t i = current_pos + SOUTH_WEST; i < 64; i += SOUTH_WEST) {
+    for (uint8_t i = current_pos + SOUTH_WEST; i < 64; i += SOUTH_WEST)
+    {
         if (i % 7 == 0)
             break;
         board += 1 << i;
@@ -277,4 +283,3 @@ BitBoard get_bishop_moves(uint8_t current_pos) {
 
     return board;
 }
-

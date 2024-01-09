@@ -1,101 +1,70 @@
 #include "board.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-const Piece EMPTYSQUARE = {NONE_TYPE, NONE_COLOR};
-
-int is_piece_equal(const Piece *piece1, const Piece *piece2) {
-  // checks for equality of two pieces (irrespective of position on the board)
-  return (piece1->pieceType == piece2->pieceType) &
-         (piece1->color == piece2->color);
+inline BitBoard get_bit(BitBoard board, int position)
+{
+    return board & (1 << position);
 }
 
-Board *copy_board(const Board *board) {
-  // creates a copy of a given bitboard
-  Board *new_board = malloc(sizeof(Board *));
-  new_board->wKing = board->wKing;
-  new_board->wQueen = board->wQueen;
-  new_board->wBishop = board->wBishop;
-  new_board->wKnight = board->wKnight;
-  new_board->wRook = board->wRook;
-  new_board->wPawn = board->wPawn;
-  new_board->wKing = board->wKing;
-  new_board->wQueen = board->wQueen;
-  new_board->wBishop = board->wBishop;
-  new_board->wKnight = board->wKnight;
-  new_board->wRook = board->wRook;
-  new_board->wPawn = board->wPawn;
-  return new_board;
+inline BitBoard set_bit(BitBoard board, int position)
+{
+    return board | (1 << position);
 }
 
-void bitboard_print(BitBoard board) {
-    for (int i = 0; i < 64; i++) {
-        printf("%lu", (board >> i) & 1);
+inline BitBoard reset_bit(BitBoard board, int position)
+{
+    return board & ~(1 << position);
+}
+
+// clang-format off
+enum BoardPositions
+{
+    a8, b8, c8, d8, e8, f8, g8, h8, 
+    a7, b7, c7, d7, e7, f7, g7, h7, 
+    a6, b6, c6, d6, e6, f6, g6, h6, 
+    a5, b5, c5, d5, e5, f5, g5, h5, 
+    a4, b4, c4, d4, e4, f4, g4, h4, 
+    a3, b3, c3, d3, e3, f3, g3, h3, 
+    a2, b2, c2, d2, e2, f2, g2, h2, 
+    a1, b1, c1, d1, e1, f1, g1, h1, 
+};
+// clang-format on
+
+/*
+"a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
+"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+"a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+"a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+"a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+"a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
+"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
+*/
+
+// pawn attacks [side][position]
+BitBoard pawn_attacks[2][64];
+
+BitBoard mask_pawn_moves(int position, int side_to_move)
+{
+    return 0;
+}
+
+
+
+void bitboard_print(BitBoard board)
+{
+    printf("\n\n");
+    for (int i = 0; i < 64; i++)
+    {
+        if (i % 8 == 0)
+            printf("  %d ", 8 - (i / 8));
+        printf(" %lu", (board >> i) & 1);
         if (i % 8 == 7)
             printf("\n");
     }
+    printf("\n     a b c d e f g h\n\n");
+    printf("  Bitboard: %lu\n", board);
 }
 
 
-Board *move_piece(const Board *board, Piece *piece, uint8_t prev,
-                  uint8_t next) {
-  // crates a new bit board representation after the moving of a piece given
-  // a current location and a new location. Assumes that a piece is present
-  // in the current location.
-  if ((prev >= 64) | (next >= 64))
-    return NULL;
-
-  Board *new_board = copy_board(board);
-  uint64_t *bitboard;
-  switch (piece->pieceType) {
-  case KING: {
-    if (piece->color == WHITE)
-      bitboard = &new_board->wKing;
-    else if (piece->color == BLACK)
-      bitboard = &new_board->bKing;
-    break;
-  }
-  case QUEEN: {
-    if (piece->color == WHITE)
-      bitboard = &new_board->wQueen;
-    else if (piece->color == BLACK)
-      bitboard = &new_board->bQueen;
-    break;
-  }
-  case BISHOP: {
-    if (piece->color == WHITE)
-      bitboard = &new_board->wBishop;
-    else if (piece->color == BLACK)
-      bitboard = &new_board->bBishop;
-    break;
-  }
-  case KNIGHT: {
-    if (piece->color == WHITE)
-      bitboard = &new_board->wKnight;
-    else if (piece->color == BLACK)
-      bitboard = &new_board->wKnight;
-    break;
-  }
-  case ROOK: {
-    if (piece->color == WHITE)
-      bitboard = &new_board->wRook;
-    else if (piece->color == BLACK)
-      bitboard = &new_board->bRook;
-    break;
-  }
-  case PAWN: {
-    if (piece->color == WHITE)
-      bitboard = &new_board->wPawn;
-    else if (piece->color == BLACK)
-      bitboard = &new_board->bPawn;
-    break;
-  }
-  default:
-    return NULL;
-  }
-
-  *bitboard &= ~(1 << prev); // remove the old 1 in the bitboard
-  *bitboard |= 1 << next;    // add the new 1 into the bitboard
-
-  return new_board;
-}

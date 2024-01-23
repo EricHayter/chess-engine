@@ -2,27 +2,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// create an enum for each position on the board
-// create a simmilar piece of code for the string representation
+const BitBoard NOT_H_FILE = (BitBoard) 9187201950435737471ull;
+const BitBoard NOT_A_FILE = (BitBoard) 18374403900871474942ull;
+const BitBoard NOT_AB_FILE = (BitBoard) 18229723555195321596ull; 
+const BitBoard NOT_GH_FILE = (BitBoard) 4557430888798830399ull; 
 
-const Piece EMPTYSQUARE = {NONE_TYPE, NONE_COLOR};
-
-int is_piece_equal(const Piece *piece1, const Piece *piece2) {
-  // checks for equality of two pieces (irrespective of position on the board)
-  return (piece1->pieceType == piece2->pieceType) &
-         (piece1->color == piece2->color);
+BitBoard get_bit(BitBoard bitboard, int position) {
+    return bitboard & (1ull << position);
 }
 
-inline BitBoard get_bit(BitBoard bitboard, int position) {
-    return bitboard & (1 << position);
+BitBoard set_bit(BitBoard bitboard, int position) {
+    return bitboard | (1ull << position);
 }
 
-inline BitBoard set_bit(BitBoard bitboard, int position) {
-    return bitboard | (1 << position);
-}
-
-inline BitBoard reset_bit(BitBoard bitboard, int position) {
-    return bitboard & ~(1 << position);
+BitBoard reset_bit(BitBoard bitboard, int position) {
+    return bitboard & ~(1ull << position);
 }
 
 Board *copy_board(const Board *board) {
@@ -43,17 +37,6 @@ Board *copy_board(const Board *board) {
   return new_board;
 }
 
-enum BoardPositions
-{
-    a8, b8, c8, d8, e8, f8, g8, h8, 
-    a7, b7, c7, d7, e7, f7, g7, h7, 
-    a6, b6, c6, d6, e6, f6, g6, h6, 
-    a5, b5, c5, d5, e5, f5, g5, h5, 
-    a4, b4, c4, d4, e4, f4, g4, h4, 
-    a3, b3, c3, d3, e3, f3, g3, h3, 
-    a2, b2, c2, d2, e2, f2, g2, h2, 
-    a1, b1, c1, d1, e1, f1, g1, h1, 
-};
 // clang-format on
 
 /*
@@ -84,12 +67,12 @@ void bitboard_print(BitBoard board)
     {
         if (i % 8 == 0)
             printf("  %d ", 8 - (i / 8));
-        printf(" %lu", (board >> i) & 1);
+        printf(" %llu", (board >> i) & 1);
         if (i % 8 == 7)
             printf("\n");
     }
     printf("\n     a b c d e f g h\n\n");
-    printf("  Bitboard: %lu\n", board);
+    printf("  Bitboard: %llu\n", board);
 }
 
 

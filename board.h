@@ -4,17 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define NORTH 8
-#define NORTH_EAST 9
-#define EAST 1
-#define SOUTH_EAST -7
-#define SOUTH -8
-#define SOUTH_WEST -9
-#define WEST -1
-#define NORTH_WEST 7
-
-
-
 typedef unsigned long long BitBoard;
 
 void bitboard_print(BitBoard board);
@@ -73,6 +62,13 @@ typedef struct {
 
 const extern BitBoard NOT_H_FILE;
 const extern BitBoard NOT_A_FILE;
+const extern BitBoard NOT_AB_FILE;
+const extern BitBoard NOT_GH_FILE;
+
+const extern BitBoard NOT_1_RANK;
+const extern BitBoard NOT_8_RANK;
+const extern BitBoard NOT_12_RANK;;
+const extern BitBoard NOT_78_RANK;
 
 BitBoard get_bit(BitBoard bitboard, int position);
 BitBoard set_bit(BitBoard bitboard, int position);

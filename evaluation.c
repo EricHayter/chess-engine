@@ -68,28 +68,5 @@ int inRange(int8_t pos)
 
 int main()
 {
-    BitBoard board = 0ull;
-
-    board = set_bit(board, g1);
-    board = set_bit(board, g2);
-    board = set_bit(board, g3);
-    board = set_bit(board, g4);
-    board = set_bit(board, g5);
-    board = set_bit(board, g6);
-    board = set_bit(board, g7);
-    board = set_bit(board, g8);
-
-    board = set_bit(board, h1);
-    board = set_bit(board, h2);
-    board = set_bit(board, h3);
-    board = set_bit(board, h4);
-    board = set_bit(board, h5);
-    board = set_bit(board, h6);
-    board = set_bit(board, h7);
-    board = set_bit(board, h8);
-
-    board = ~board;
-
-
-    bitboard_print(board);
+    bitboard_print();
 }

@@ -7,6 +7,11 @@ const BitBoard NOT_A_FILE = (BitBoard) 18374403900871474942ull;
 const BitBoard NOT_AB_FILE = (BitBoard) 18229723555195321596ull; 
 const BitBoard NOT_GH_FILE = (BitBoard) 4557430888798830399ull; 
 
+const BitBoard NOT_1_RANK = (BitBoard) 72057594037927935ull;
+const BitBoard NOT_8_RANK = (BitBoard) 18446744073709551360ull;
+const BitBoard NOT_12_RANK = (BitBoard) 281474976710655ull;
+const BitBoard NOT_78_RANK = (BitBoard) 18446744073709486080ull;
+
 BitBoard get_bit(BitBoard bitboard, int position) {
     return bitboard & (1ull << position);
 }
@@ -20,7 +25,7 @@ BitBoard reset_bit(BitBoard bitboard, int position) {
 }
 
 Board *copy_board(const Board *board) {
-  // creates a copy of a given bitboard
+  // creates a copy of a given boardstate
   Board *new_board = malloc(sizeof(Board *));
   new_board->wKing = board->wKing;
   new_board->wQueen = board->wQueen;

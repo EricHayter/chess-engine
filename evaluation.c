@@ -61,12 +61,8 @@ double evaluate(Board *board)
     return evaluation;
 }
 
-int inRange(int8_t pos)
+int main() 
 {
-    return (pos < 64) && (pos >= 0);
-}
-
-int main()
-{
-    bitboard_print();
+    bitboard_print(knight_moves(e4));
+    return 0;
 }

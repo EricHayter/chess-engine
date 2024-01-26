@@ -7,14 +7,14 @@
 int dir_num(Direction direction)
 {
     switch (direction) {
-    case NORTH: return -8; 
-    case NORTH_EAST: return -7; 
+    case NORTH: return 8; 
+    case NORTH_EAST: return 9; 
     case EAST: return 1; 
-    case SOUTH_EAST: return 9; 
-    case SOUTH: return 8; 
-    case SOUTH_WEST: return 7; 
+    case SOUTH_EAST: return -7; 
+    case SOUTH: return -8; 
+    case SOUTH_WEST: return -9; 
     case WEST: return -1; 
-    case NORTH_WEST: return -9; 
+    case NORTH_WEST: return 7; 
     }
 }
 
@@ -69,32 +69,55 @@ BitBoard get_ray(BoardPosition start_pos, Direction direction)
     }
     
     while (!(ray & ~bounds)) {
-        start_pos += direction_value;
+        start_pos -= direction_value;
         ray = set_bit(ray, start_pos);
     }
 
     return ray;
 }
 
-BitBoard knight_moves(BoardPosition position)
+BitBoard king_moves(BoardPosition position)
 {   
-    // got some bugs in here not sure what tho
-    BitBoard board = (BitBoard) 0ull;
-    // north moves
-    if (position & NOT_78_RANK & NOT_H_FILE) board = set_bit(board, position + dir_num(NORTH) + dir_num(NORTH_EAST));
-    if (position & NOT_78_RANK & NOT_A_FILE) board = set_bit(board, position + dir_num(NORTH) + dir_num(NORTH_WEST));
+    BitBoard start = set_bit(0ull, position);
+    BitBoard moves = (BitBoard) 0ull;
 
-    // east moves
-    if (position & NOT_GH_FILE & NOT_8_RANK) board = set_bit(board, position + dir_num(EAST) + dir_num(NORTH_EAST));
-    if (position & NOT_GH_FILE & NOT_1_RANK) board = set_bit(board, position + dir_num(EAST) + dir_num(SOUTH_EAST));
+    // north moves
+    if (start & NOT_8_RANK) moves = set_bit(moves, position - dir_num(NORTH));
+    if (start & NOT_8_RANK & NOT_A_FILE) moves = set_bit(moves, position - dir_num(NORTH_WEST));
+    if (start & NOT_8_RANK & NOT_H_FILE) moves = set_bit(moves, position - dir_num(NORTH_EAST));
+
+    // horizontal moves
+    if (start & NOT_H_FILE) moves = set_bit(moves, position - dir_num(EAST));
+    if (start & NOT_A_FILE) moves = set_bit(moves, position - dir_num(WEST));
 
     // south moves
-    if (position & NOT_12_RANK & NOT_H_FILE) board = set_bit(board, position + dir_num(SOUTH) + dir_num(SOUTH_EAST));
-    if (position & NOT_12_RANK & NOT_A_FILE) board = set_bit(board, position + dir_num(SOUTH) + dir_num(SOUTH_WEST));
+    if (start & NOT_1_RANK) moves = set_bit(moves, position - dir_num(SOUTH));
+    if (start & NOT_1_RANK & NOT_A_FILE) moves = set_bit(moves, position - dir_num(SOUTH_WEST));
+    if (start & NOT_1_RANK & NOT_H_FILE) moves = set_bit(moves, position - dir_num(SOUTH_EAST));
+
+    return moves;
+}
+
+BitBoard knight_moves(BoardPosition position)
+{   
+    BitBoard start = set_bit(0ull, position);
+    BitBoard moves = (BitBoard) 0ull;
+
+    // north moves
+    if (start & NOT_78_RANK & NOT_H_FILE) moves = set_bit(moves, position - dir_num(NORTH) - dir_num(NORTH_EAST));
+    if (start & NOT_78_RANK & NOT_A_FILE) moves = set_bit(moves, position - dir_num(NORTH) - dir_num(NORTH_WEST));
+
+    // east moves
+    if (start & NOT_GH_FILE & NOT_8_RANK) moves = set_bit(moves, position - dir_num(EAST) - dir_num(NORTH_EAST));
+    if (start & NOT_GH_FILE & NOT_1_RANK) moves = set_bit(moves, position - dir_num(EAST) - dir_num(SOUTH_EAST));
+
+    // south moves
+    if (start & NOT_12_RANK & NOT_H_FILE) moves = set_bit(moves, position - dir_num(SOUTH) - dir_num(SOUTH_EAST));
+    if (start & NOT_12_RANK & NOT_A_FILE) moves = set_bit(moves, position - dir_num(SOUTH) - dir_num(SOUTH_WEST));
 
     // west moves
-    if (position & NOT_AB_FILE & NOT_8_RANK) board = set_bit(board, position + dir_num(WEST) + dir_num(NORTH_WEST));
-    if (position & NOT_AB_FILE & NOT_1_RANK) board = set_bit(board, position + dir_num(WEST) + dir_num(SOUTH_WEST));
+    if (start & NOT_AB_FILE & NOT_8_RANK) moves = set_bit(moves, position - dir_num(WEST) - dir_num(NORTH_WEST));
+    if (start & NOT_AB_FILE & NOT_1_RANK) moves = set_bit(moves, position - dir_num(WEST) - dir_num(SOUTH_WEST));
  
-    return board;
+    return moves;
 }

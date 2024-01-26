@@ -21,7 +21,6 @@ typedef enum {
 typedef enum {
     WHITE,
     BLACK,
-    NONE_COLOR, // empty slots
 } Color;
 
 typedef enum {
@@ -69,6 +68,9 @@ const extern BitBoard NOT_1_RANK;
 const extern BitBoard NOT_8_RANK;
 const extern BitBoard NOT_12_RANK;;
 const extern BitBoard NOT_78_RANK;
+
+const extern BitBoard FILE_2;
+const extern BitBoard FILE_7;
 
 BitBoard get_bit(BitBoard bitboard, int position);
 BitBoard set_bit(BitBoard bitboard, int position);

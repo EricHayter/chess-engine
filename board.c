@@ -12,6 +12,9 @@ const BitBoard NOT_8_RANK = (BitBoard) 18446744073709551360ull;
 const BitBoard NOT_12_RANK = (BitBoard) 281474976710655ull;
 const BitBoard NOT_78_RANK = (BitBoard) 18446744073709486080ull;
 
+const BitBoard FILE_2 = 71776119061217280ull; 
+const BitBoard FILE_7 = 65280ull; 
+
 BitBoard get_bit(BitBoard bitboard, int position) {
     return bitboard & (1ull << position);
 }

@@ -63,8 +63,6 @@ double evaluate(Board *board)
 
 int main() 
 {
-    bitboard_print(NOT_78_RANK);
-    bitboard_print(set_bit(0ull, d6));
-    bitboard_print(knight_moves(e4));
+    bitboard_print(king_moves(h2));
     return 0;
 }

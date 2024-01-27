@@ -39,8 +39,8 @@ typedef enum {
 } Direction;
 
 int direction_num(Direction dir);
-BitBoard bitscan_forward(BitBoard board);
-BitBoard bitscan_backward(BitBoard board);
+unsigned int bitscan_forward(BitBoard board);
+unsigned int bitscan_backward(BitBoard board);
 BitBoard get_ray(BoardPosition start_pos, Direction direction);
 BitBoard king_moves(BoardPosition position);
 BitBoard knight_moves(BoardPosition position);

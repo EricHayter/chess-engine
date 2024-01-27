@@ -18,21 +18,26 @@ int dir_num(Direction direction)
     }
 }
 
-BitBoard bitscan_forward(BitBoard board)
+// really not optimal but works for now
+unsigned int bitscan_forward(BitBoard board)
 {
     assert(board != 0);
-    return board ^ (board & (board - 1));
+    unsigned int i = 0;
+    while (!(board & 1)) {
+        board >>= 1;
+        i++;
+    }
+    return i;
 }
 
-// try not to create the most ugly backwards bitscan challenge (impossible)
-BitBoard bitscan_backward(BitBoard board)
+// these are almost certainly too slow
+unsigned int bitscan_backward(BitBoard board)
 {
-    assert(board != 0); // XDDDDDDD
-    while (board & (board - 1))
-    {
-        board = board & (board - 1); 
-    }
-    return bitscan_forward(board);
+    assert(board != 0);
+    unsigned int i = 0;
+    while (board >>= 1)
+        i++;
+    return i;
 }
 
 
@@ -139,6 +144,23 @@ BitBoard knight_moves(BoardPosition position)
  
     return moves;
 }
+
+bool is_checked(Board* board, Color side) // second param is already in board
+{
+    unsigned int king_position;
+    if (side == WHITE)
+        king_position = bitscan_forward(board->wKing);
+    else if (side == BLACK)
+        king_position = bitscan_forward(board->bKing);
+    
+    // queens
+    // bishops
+    // knights
+    // rooks
+    // pawns
+
+}
+
 
 
 BitBoard pawn_moves(BoardPosition position, Color to_move)

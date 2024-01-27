@@ -63,6 +63,8 @@ double evaluate(Board *board)
 
 int main() 
 {
-    bitboard_print(king_moves(h2));
+    bitboard_print(get_ray(e4, SOUTH_WEST));
+    printf("%d\n", bitscan_forward(get_ray(e4, SOUTH_WEST)));
+    printf("%d\n", bitscan_backward(get_ray(e4, SOUTH_WEST)));
     return 0;
 }

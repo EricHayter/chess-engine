@@ -64,6 +64,7 @@ double evaluate(Board *board)
 int main() 
 {
     BitBoard b = 0ull;
+    b = set_bit(b, a4);
     // b = set_bit(b, a4) & get_ray(a2, NORTH);
     // unsigned int blocked = bitscan_backward(b);
     // bitboard_print(get_ray(blocked, NORTH));

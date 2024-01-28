@@ -43,7 +43,8 @@ unsigned int bitscan_backward(BitBoard board)
 
 BitBoard get_ray(BoardPosition start_pos, Direction direction)
 {
-    BitBoard ray = (BitBoard) 0ull;
+    BitBoard ray = set_bit(0ull, start_pos);
+    unsigned int pos = start_pos;
     int direction_value = dir_num(direction);
     BitBoard bounds;
     switch (direction) {
@@ -74,10 +75,10 @@ BitBoard get_ray(BoardPosition start_pos, Direction direction)
     }
     
     while (!(ray & ~bounds)) {
-        start_pos += direction_value;
-        ray = set_bit(ray, start_pos);
+        pos += direction_value;
+        ray = set_bit(ray, pos);
     }
-
+    ray = reset_bit(ray, start_pos);
     return ray;
 }
 
@@ -183,28 +184,14 @@ BitBoard pawn_moves(BoardPosition position, Color to_move)
 
 BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction)
 {
-    if (direction > 0)
-        return get_positive_ray_attacks(occupied, position, direction);
-    else
-        return get_negative_ray_attacks(occupied, position, direction);
-}
-
-BitBoard get_negative_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction)
-{
-    BitBoard attacks = occupied & get_ray(position, direction);
-    if (attacks) {
-        BitBoard blocker = bitscan_forward(attacks);
-        attacks ^= get_ray(blocker, direction);
-    }
-    return attacks;
-}
-
-BitBoard get_positive_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction)
-{
-    BitBoard attacks = occupied & get_ray(position, direction);
-    if (attacks) {
-        BitBoard blocker = bitscan_backward(attacks);
-        attacks ^= get_ray(blocker, direction);
+    BitBoard attacks = get_ray(position, direction);
+    BitBoard blocker = occupied & attacks;
+    if (blocker) {
+        if (direction > 0)
+            position = bitscan_forward(attacks);
+        else
+            position = bitscan_backward(attacks);
+        attacks ^= get_ray(position, direction);
     }
     return attacks;
 }

@@ -46,4 +46,13 @@ BitBoard king_moves(BoardPosition position);
 BitBoard knight_moves(BoardPosition position);
 BitBoard pawn_moves(BoardPosition position, Color to_move);
 
+
+BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
+BitBoard get_negative_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
+BitBoard get_positive_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
+
+BitBoard rook_attacks(BitBoard board, BoardPosition position);
+BitBoard bishop_attacks(BitBoard occupied, BoardPosition position);
+BitBoard queen_attacks(BitBoard occupied, BoardPosition position);
+
 #endif

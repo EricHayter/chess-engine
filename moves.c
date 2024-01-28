@@ -145,21 +145,6 @@ BitBoard knight_moves(BoardPosition position)
     return moves;
 }
 
-bool is_checked(Board* board, Color side) // second param is already in board
-{
-    unsigned int king_position;
-    if (side == WHITE)
-        king_position = bitscan_forward(board->wKing);
-    else if (side == BLACK)
-        king_position = bitscan_forward(board->bKing);
-    
-    // queens
-    // bishops
-    // knights
-    // rooks
-    // pawns
-
-}
 
 
 
@@ -195,3 +180,75 @@ BitBoard pawn_moves(BoardPosition position, Color to_move)
 
     return moves;
 }
+
+BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction)
+{
+    if (direction > 0)
+        return get_positive_ray_attacks(occupied, position, direction);
+    else
+        return get_negative_ray_attacks(occupied, position, direction);
+}
+
+BitBoard get_negative_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction)
+{
+    BitBoard attacks = occupied & get_ray(position, direction);
+    if (attacks) {
+        BitBoard blocker = bitscan_forward(attacks);
+        attacks ^= get_ray(blocker, direction);
+    }
+    return attacks;
+}
+
+BitBoard get_positive_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction)
+{
+    BitBoard attacks = occupied & get_ray(position, direction);
+    if (attacks) {
+        BitBoard blocker = bitscan_backward(attacks);
+        attacks ^= get_ray(blocker, direction);
+    }
+    return attacks;
+}
+
+
+BitBoard rook_attacks(BitBoard occupied, BoardPosition position)
+{
+    BitBoard moves = 0ull;
+    moves |= get_ray_attacks(occupied, position, NORTH);
+    moves |= get_ray_attacks(occupied, position, EAST);
+    moves |= get_ray_attacks(occupied, position, SOUTH);
+    moves |= get_ray_attacks(occupied, position, WEST);
+    return moves;
+}
+
+BitBoard bishop_attacks(BitBoard occupied, BoardPosition position)
+{
+    BitBoard moves = 0ull;
+    moves |= get_ray_attacks(occupied, position, NORTH_EAST);
+    moves |= get_ray_attacks(occupied, position, SOUTH_EAST);
+    moves |= get_ray_attacks(occupied, position, NORTH_WEST);
+    moves |= get_ray_attacks(occupied, position, SOUTH_WEST);
+    return moves;
+}
+
+BitBoard queen_attacks(BitBoard occupied, BoardPosition position)
+{
+    return bishop_attacks(occupied, position) | rook_attacks(occupied, position);
+}
+
+
+bool is_checked(Board* board, Color side) // second param is already in board
+{
+    unsigned int king_position;
+    if (side == WHITE)
+        king_position = bitscan_forward(board->wKing);
+    else if (side == BLACK)
+        king_position = bitscan_forward(board->bKing);
+    
+    // queens
+    // bishops
+    // knights
+    // rooks
+    // pawns
+    return true;
+}
+

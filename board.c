@@ -45,7 +45,6 @@ Board *copy_board(const Board *board) {
   return new_board;
 }
 
-// clang-format on
 
 /*
 "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
@@ -58,15 +57,23 @@ Board *copy_board(const Board *board) {
 "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
 */
 
-// pawn attacks [side][position]
-BitBoard pawn_attacks[2][64];
 
-BitBoard mask_pawn_moves(int position, int side_to_move)
+BitBoard get_occupied(Board* board)
 {
-    return 0;
+    return board->wKing |
+        board->wQueen |
+        board->wBishop |
+        board->wKnight |
+        board->wRook |
+        board->wPawn |
+        board->bKing |
+        board->bQueen |
+        board->bBishop |
+        board->bKnight |
+        board->bRook |
+        board->bPawn;
 }
-
-
+    
 
 void bitboard_print(BitBoard board)
 {

@@ -36,7 +36,7 @@ typedef enum {
 
 
 typedef struct {
-    Color Turn;
+    Color turn;
     bool castleKSide;        // Can castle on king side
     bool castleQSide;        // Can castle of queen side
     BitBoard doublePawnMove; // location of pawn that moved 2 squares
@@ -75,5 +75,7 @@ const extern BitBoard FILE_7;
 BitBoard get_bit(BitBoard bitboard, int position);
 BitBoard set_bit(BitBoard bitboard, int position);
 BitBoard reset_bit(BitBoard bitboard, int position);
+
+BitBoard get_occupied(Board* board);
 
 #endif

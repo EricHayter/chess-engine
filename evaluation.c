@@ -64,7 +64,10 @@ double evaluate(Board *board)
 int main() 
 {
     BitBoard b = 0ull;
-    b = set_bit(b, a4);
+    b = set_bit(b, a2);
+    // bitboard_print(b);
+    // printf("%d\n", bitscan_forward(b));
+    // printf("%d\n", bitscan_backward(b));
     // b = set_bit(b, a4) & get_ray(a2, NORTH);
     // unsigned int blocked = bitscan_backward(b);
     // bitboard_print(get_ray(blocked, NORTH));
@@ -74,6 +77,6 @@ int main()
     // rook_moves |= get_ray(a2, SOUTH);
     // rook_moves |= get_ray(a2, WEST);
     // bitboard_print(rook_moves);
-    bitboard_print(rook_attacks(b, a6));
+    bitboard_print(rook_attacks(b, a2));
     return 0;
 }

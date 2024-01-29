@@ -35,9 +35,27 @@ unsigned int bitscan_backward(BitBoard board)
 {
     assert(board != 0);
     unsigned int i = 0;
-    while (board >>= 1)
+    while (board) {
+        board <<= 1;
         i++;
+    }
     return i;
+}
+
+
+BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction)
+{
+    BitBoard ray = get_ray(position, direction);
+    BitBoard blockers = occupied & ray;
+    unsigned int nearest_blocker;
+    if (blockers) {
+        if (dir_num(direction) > 0) // moving up or west
+            nearest_blocker = bitscan_backward(blockers);
+        else
+            nearest_blocker = bitscan_forward(blockers);
+        ray ^= get_ray(nearest_blocker, direction);
+    }
+    return ray;
 }
 
 
@@ -114,7 +132,7 @@ BitBoard king_moves(BoardPosition position)
 }
 
 
-BitBoard knight_moves(BoardPosition position)
+BitBoard knight_attacks(BoardPosition position)
 {   
     BitBoard start = set_bit(0ull, position);
     BitBoard moves = (BitBoard) 0ull;
@@ -145,8 +163,6 @@ BitBoard knight_moves(BoardPosition position)
  
     return moves;
 }
-
-
 
 
 BitBoard pawn_moves(BoardPosition position, Color to_move)
@@ -182,20 +198,6 @@ BitBoard pawn_moves(BoardPosition position, Color to_move)
     return moves;
 }
 
-BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction)
-{
-    BitBoard attacks = get_ray(position, direction);
-    BitBoard blocker = occupied & attacks;
-    if (blocker) {
-        if (direction > 0)
-            position = bitscan_forward(attacks);
-        else
-            position = bitscan_backward(attacks);
-        attacks ^= get_ray(position, direction);
-    }
-    return attacks;
-}
-
 
 BitBoard rook_attacks(BitBoard occupied, BoardPosition position)
 {
@@ -206,6 +208,7 @@ BitBoard rook_attacks(BitBoard occupied, BoardPosition position)
     moves |= get_ray_attacks(occupied, position, WEST);
     return moves;
 }
+
 
 BitBoard bishop_attacks(BitBoard occupied, BoardPosition position)
 {
@@ -223,19 +226,25 @@ BitBoard queen_attacks(BitBoard occupied, BoardPosition position)
 }
 
 
-bool is_checked(Board* board, Color side) // second param is already in board
+bool is_checked(Board* board) 
 {
-    unsigned int king_position;
-    if (side == WHITE)
-        king_position = bitscan_forward(board->wKing);
-    else if (side == BLACK)
-        king_position = bitscan_forward(board->bKing);
+    BitBoard occupied = get_occupied(board);
+    unsigned int king_pos;
+    if (board->turn == WHITE) {
+        king_pos = bitscan_forward(board->wKing);
+        if (queen_attacks(occupied, king_pos) & board->bQueen) return true;
+        if (rook_attacks(occupied, king_pos) & board->bRook) return true;
+        if (bishop_attacks(occupied, king_pos) & board->bBishop) return true;
+        if (knight_attacks(king_pos) & board->bKnight) return true;
+        // do a pawn check too
+    } else {
+        king_pos = bitscan_forward(board->bKing);
+        if (queen_attacks(occupied, king_pos) & board->wQueen) return true;
+        if (rook_attacks(occupied, king_pos) & board->wRook) return true;
+        if (bishop_attacks(occupied, king_pos) & board->wBishop) return true;
+        if (knight_attacks(king_pos) & board->wKnight) return true;
+    }
     
-    // queens
-    // bishops
-    // knights
-    // rooks
-    // pawns
-    return true;
+    return false;
 }
 

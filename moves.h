@@ -42,17 +42,17 @@ int direction_num(Direction dir);
 unsigned int bitscan_forward(BitBoard board);
 unsigned int bitscan_backward(BitBoard board);
 BitBoard get_ray(BoardPosition start_pos, Direction direction);
-BitBoard king_moves(BoardPosition position);
-BitBoard knight_moves(BoardPosition position);
-BitBoard pawn_moves(BoardPosition position, Color to_move);
 
-
-BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
+BitBoard get_ray_moves(BitBoard occupied, BoardPosition position, Direction direction);
 BitBoard get_negative_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
 BitBoard get_positive_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
 
-BitBoard rook_attacks(BitBoard board, BoardPosition position);
-BitBoard bishop_attacks(BitBoard occupied, BoardPosition position);
-BitBoard queen_attacks(BitBoard occupied, BoardPosition position);
+BitBoard king_moves(BoardPosition position);
+BitBoard queen_moves(BitBoard board, BoardPosition position);
+BitBoard rook_moves(BitBoard board, BoardPosition position);
+BitBoard bishop_moves(BitBoard occupied, BoardPosition position);
+BitBoard queen_moves(BitBoard occupied, BoardPosition position);
+BitBoard pawn_attacks(BoardPosition position, Color to_move);
+BitBoard pawn_pushes(BoardPosition position, Color to_move);
 
 #endif

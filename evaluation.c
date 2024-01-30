@@ -77,6 +77,6 @@ int main()
     // rook_moves |= get_ray(a2, SOUTH);
     // rook_moves |= get_ray(a2, WEST);
     // bitboard_print(rook_moves);
-    bitboard_print(rook_attacks(b, a2));
+    bitboard_print(rook_moves(b, a2));
     return 0;
 }

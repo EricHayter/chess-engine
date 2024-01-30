@@ -132,7 +132,7 @@ BitBoard king_moves(BoardPosition position)
 }
 
 
-BitBoard knight_attacks(BoardPosition position)
+BitBoard knight_moves(BoardPosition position)
 {   
     BitBoard start = set_bit(0ull, position);
     BitBoard moves = (BitBoard) 0ull;
@@ -164,8 +164,7 @@ BitBoard knight_attacks(BoardPosition position)
     return moves;
 }
 
-
-BitBoard pawn_moves(BoardPosition position, Color to_move)
+BitBoard pawn_pushes(BoardPosition position, Color to_move)
 {
     BitBoard start = set_bit(0ull, position);
     BitBoard moves = 0ull;
@@ -174,8 +173,28 @@ BitBoard pawn_moves(BoardPosition position, Color to_move)
     case WHITE:
         if (start & FILE_2) 
             moves = set_bit(moves, position + 2 * dir_num(NORTH));
-        if (start & NOT_8_RANK) {
+        if (start & NOT_8_RANK)
             moves = set_bit(moves, position + dir_num(NORTH)); 
+        break;
+    case BLACK:
+        if (start & FILE_7) 
+            moves = set_bit(moves, position + 2 * dir_num(SOUTH));
+        if (start & NOT_1_RANK)
+            moves = set_bit(moves, position + dir_num(SOUTH)); 
+        break;
+    }
+    
+    return moves;
+}
+
+BitBoard pawn_attacks(BoardPosition position, Color to_move)
+{
+    BitBoard start = set_bit(0ull, position);
+    BitBoard moves = 0ull;
+
+    switch (to_move) {
+    case WHITE:
+        if (start & NOT_8_RANK) {
             if (start & NOT_H_FILE)
                 moves = set_bit(moves, position + dir_num(NORTH_EAST));
             if (start & NOT_A_FILE)
@@ -183,10 +202,7 @@ BitBoard pawn_moves(BoardPosition position, Color to_move)
         }
         break;
     case BLACK:
-        if (start & FILE_7) 
-            moves = set_bit(moves, position + 2 * dir_num(SOUTH));
         if (start & NOT_1_RANK) {
-            moves = set_bit(moves, position + dir_num(SOUTH)); 
             if (start & NOT_H_FILE)
                 moves = set_bit(moves, position + dir_num(SOUTH_EAST));
             if (start & NOT_A_FILE)
@@ -199,7 +215,7 @@ BitBoard pawn_moves(BoardPosition position, Color to_move)
 }
 
 
-BitBoard rook_attacks(BitBoard occupied, BoardPosition position)
+BitBoard rook_moves(BitBoard occupied, BoardPosition position)
 {
     BitBoard moves = 0ull;
     moves |= get_ray_attacks(occupied, position, NORTH);
@@ -210,7 +226,7 @@ BitBoard rook_attacks(BitBoard occupied, BoardPosition position)
 }
 
 
-BitBoard bishop_attacks(BitBoard occupied, BoardPosition position)
+BitBoard bishop_moves(BitBoard occupied, BoardPosition position)
 {
     BitBoard moves = 0ull;
     moves |= get_ray_attacks(occupied, position, NORTH_EAST);
@@ -220,9 +236,10 @@ BitBoard bishop_attacks(BitBoard occupied, BoardPosition position)
     return moves;
 }
 
-BitBoard queen_attacks(BitBoard occupied, BoardPosition position)
+
+BitBoard queen_moves(BitBoard occupied, BoardPosition position)
 {
-    return bishop_attacks(occupied, position) | rook_attacks(occupied, position);
+    return bishop_moves(occupied, position) | rook_moves(occupied, position);
 }
 
 
@@ -230,19 +247,24 @@ bool is_checked(Board* board)
 {
     BitBoard occupied = get_occupied(board);
     unsigned int king_pos;
-    if (board->turn == WHITE) {
+    switch (board->turn) {
+    case WHITE:
         king_pos = bitscan_forward(board->wKing);
-        if (queen_attacks(occupied, king_pos) & board->bQueen) return true;
-        if (rook_attacks(occupied, king_pos) & board->bRook) return true;
-        if (bishop_attacks(occupied, king_pos) & board->bBishop) return true;
-        if (knight_attacks(king_pos) & board->bKnight) return true;
-        // do a pawn check too
-    } else {
+        if (queen_moves(occupied, king_pos) & board->bQueen) return true;
+        if (rook_moves(occupied, king_pos) & board->bRook) return true;
+        if (bishop_moves(occupied, king_pos) & board->bBishop) return true;
+        if (knight_moves(king_pos) & board->bKnight) return true;
+        if (pawn_attacks(king_pos, WHITE) & board->bPawn) return true;
+        if (king_moves(king_pos) & board->bKing) return true;
+        break;
+    case BLACK:
         king_pos = bitscan_forward(board->bKing);
-        if (queen_attacks(occupied, king_pos) & board->wQueen) return true;
-        if (rook_attacks(occupied, king_pos) & board->wRook) return true;
-        if (bishop_attacks(occupied, king_pos) & board->wBishop) return true;
-        if (knight_attacks(king_pos) & board->wKnight) return true;
+        if (queen_moves(occupied, king_pos) & board->wQueen) return true;
+        if (rook_moves(occupied, king_pos) & board->wRook) return true;
+        if (bishop_moves(occupied, king_pos) & board->wBishop) return true;
+        if (knight_moves(king_pos) & board->wKnight) return true;
+        if (king_moves(king_pos) & board->wKing) return true;
+        break;
     }
     
     return false;

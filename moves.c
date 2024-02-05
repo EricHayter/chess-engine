@@ -1,8 +1,22 @@
 #include "moves.h"
 #include "arraylist.h"
 #include "board.h"
+#include <stdlib.h>
 #include <assert.h>
 
+
+Move *create_move(int to, int from, MoveFlag type)
+{
+    Move *move = malloc(sizeof(Move));
+    if (!move) { // this is bad but we will keep it for now
+        return NULL; 
+    }
+
+    move->to = to;
+    move->from = from;
+    move->type = type;
+    return move;
+}
 
 int dir_num(Direction direction)
 {
@@ -270,7 +284,23 @@ bool is_checked(Board* board)
     return false;
 }
 
-ArrayList* get_moves(Board* board)
+// Given a list of possible moves and the location of friendly and
+// non-friendly pieces add move instances to the move_list arraylist.
+void classify_moves(ArrayList *move_list, int original_pos, BitBoard moves, BitBoard vacant, BitBoard enemy)
+{
+    assert(!move_list);
+    enemy |= moves;
+    vacant |= moves;
+
+    for (int square = 0; square < 64; square++) { // iterate through all the given possible moves
+        if (enemy & (1 << square))
+            arraylist_push(move_list, create_move(square, original_pos, CAPTURE));
+        else if (vacant & (1 << square))
+            arraylist_push(move_list, create_move(square, original_pos, CAPTURE));
+    }
+}
+
+ArrayList *get_moves(Board* board)
 {
     BitBoard occupied = get_occupied(board);
     BitBoard vacant = get_vacant_squares(board);
@@ -281,17 +311,32 @@ ArrayList* get_moves(Board* board)
 
     switch (board->turn) {
     case WHITE:
-        for (int i = 0; i < 64; i++) { // check each square for a white piece
-            if (board->wKing >> i & 1) {
-               moves = king_moves(i);
-               // check all the quiet moves
-               // check all the captures
-               //
+        for (int square = 0; square < 64; square++) { // check each square for a white piece
+            if (board->wKing >> square & 1) {
+               classify_moves(move_list, square, king_moves(square), vacant, black_pieces);
+               classify_moves(move_list, square, queen_moves(occupied, square), vacant, black_pieces);
+               classify_moves(move_list, square, bishop_moves(occupied, square), vacant, black_pieces);
+               classify_moves(move_list, square, knight_moves(square), vacant, black_pieces);
+               classify_moves(move_list, square, rook_moves(occupied, square), vacant, black_pieces);
+               // add extra edge cases (i.e. pawn promo, en pessant, castle)
             }
         }
 
         break;
     case BLACK:
+        for (int square = 0; square < 64; square++) { // check each square for a white piece
+            if (board->wKing >> square & 1) {
+               classify_moves(move_list, square, king_moves(square), vacant, white_pieces);
+               classify_moves(move_list, square, queen_moves(occupied, square), vacant, white_pieces);
+               classify_moves(move_list, square, bishop_moves(occupied, square), vacant, white_pieces);
+               classify_moves(move_list, square, knight_moves(square), vacant, white_pieces);
+               classify_moves(move_list, square, rook_moves(occupied, square), vacant, white_pieces);
+               // add extra edge cases (i.e. pawn promo, en pessant, castle)
+            }
+        }
+
         break;
     }
+
+    return move_list;
 }

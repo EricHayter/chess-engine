@@ -270,6 +270,7 @@ bool is_checked(Board* board)
     return false;
 }
 
+<<<<<<< HEAD
 
 ArrayList* get_moves(Board* board)
 {
@@ -281,3 +282,31 @@ ArrayList* get_moves(Board* board)
 
     return moves;
 }
+=======
+ArrayList* get_moves(Board* board)
+{
+    BitBoard occupied = get_occupied(board);
+    BitBoard vacant = get_vacant_squares(board);
+    BitBoard white_pieces = get_white_pieces(board);
+    BitBoard black_pieces = get_black_pieces(board);
+    ArrayList* move_list = arraylist_create();
+    BitBoard moves;
+
+    switch (board->turn) {
+    case WHITE:
+        for (int i = 0; i < 64; i++) { // check each square for a white piece
+            if (board->wKing >> i & 1) {
+               moves = king_moves(i);
+               // check all the quiet moves
+               // check all the captures
+               //
+            }
+        }
+
+        break;
+    case BLACK:
+        break;
+    }
+}
+
+>>>>>>> refs/remotes/origin/main

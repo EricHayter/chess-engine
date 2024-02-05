@@ -15,9 +15,16 @@ typedef struct {
     void** content;
 } ArrayList;
 
+typedef enum {
+    SUCCESS,
+    MAX_CAPACITY_ERROR,
+    EMPTY_LIST_ERROR,
+    NULL_ELEMENT_ERROR
+} ArrayListError;
+
 ArrayList* arraylist_create();
 void arraylist_destroy(ArrayList* list);
-int arraylist_push(ArrayList* list, void* element);
+ArrayListError arraylist_push(ArrayList* list, void* element);
 void* arraylist_pop(ArrayList* list);
 void* arraylist_get(ArrayList* list, uint32_t idx);
 void arraylist_set(ArrayList* list, uint32_t idx, void* element);

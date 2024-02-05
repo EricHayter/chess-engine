@@ -8,6 +8,8 @@
 ArrayList *arraylist_create()
 {
     ArrayList *list = malloc(sizeof(ArrayList));
+    if (!list)
+        return NULL;
     list->capacity = DEFAULT_CAPACITY;
     list->size = 0;
     list->content = calloc(DEFAULT_CAPACITY, sizeof(void *));
@@ -15,24 +17,34 @@ ArrayList *arraylist_create()
         return NULL;
     return list;
 }
+
+
 void destroy_list(ArrayList *list)
 {
     free(list->content);
     free(list);
 }
 
-int push(ArrayList *list, void *element)
-{
-    if (list->capacity == MAX_CAPACTIY)
-        return 1;
 
-    if (list->size == list->capacity - 1)
-    {
+uint32_t size(ArrayList* list)
+{
+    return list->size;
+}
+
+ArrayListError push(ArrayList *list, void *element)
+{
+    if (!element)
+        return NULL_ELEMENT_ERROR;
+
+    if (list->capacity == MAX_CAPACTIY)
+        return MAX_CAPACITY_ERROR;
+
+    if (list->size == list->capacity - 1) {
         if (list->capacity >= MAX_CAPACTIY / GROWTH_RATE)
             list->capacity = MAX_CAPACTIY;
         else
             list->capacity *= GROWTH_RATE;
-        list->content = realloc(list->content, list->capacity * sizeof(void *));
+        list->content = realloc(list->content, list->capacity * sizeof(void*));
     }
 
     list->content[list->size++] = (void *)element;
@@ -41,11 +53,15 @@ int push(ArrayList *list, void *element)
 
 void *pop(ArrayList *list)
 {
+    if (list->size == 0)
+        return NULL;
     return list->content[list->size--];
 }
 
 void *get(ArrayList *list, uint32_t idx)
 {
+    if (idx > list->size)
+        return NULL;
     return list->content[idx];
 }
 

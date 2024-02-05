@@ -270,3 +270,14 @@ bool is_checked(Board* board)
     return false;
 }
 
+
+ArrayList* get_moves(Board* board)
+{
+    ArrayList *moves = arraylist_create();     
+
+    for (int i = 0; i < 64; i++) {
+         
+    }
+
+    return moves;
+}

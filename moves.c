@@ -270,19 +270,6 @@ bool is_checked(Board* board)
     return false;
 }
 
-<<<<<<< HEAD
-
-ArrayList* get_moves(Board* board)
-{
-    ArrayList *moves = arraylist_create();     
-
-    for (int i = 0; i < 64; i++) {
-         
-    }
-
-    return moves;
-}
-=======
 ArrayList* get_moves(Board* board)
 {
     BitBoard occupied = get_occupied(board);
@@ -308,5 +295,3 @@ ArrayList* get_moves(Board* board)
         break;
     }
 }
-
->>>>>>> refs/remotes/origin/main

@@ -31,7 +31,7 @@ uint32_t size(ArrayList* list)
     return list->size;
 }
 
-ArrayListError push(ArrayList *list, void *element)
+ArrayListError arraylist_push(ArrayList *list, void *element)
 {
     if (!element)
         return NULL_ELEMENT_ERROR;

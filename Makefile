@@ -10,7 +10,7 @@ arraylist.o: arraylist.c
 	gcc -c -I/arraylist.h $(compile_flags) arraylist.c
 
 moves.o: moves.c
-	gcc -c -I/moves.h $(compile_flags) moves.c
+	gcc -c -I/arraylist.h -I/moves.h $(compile_flags) moves.c
 
 board.o: board.c
 	gcc -c -I/board.h $(compile_flags) board.c

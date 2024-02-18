@@ -28,17 +28,16 @@ typedef struct {
 } Move;
 
 typedef enum {
-    NORTH,
-    NORTH_EAST,
-    EAST,
-    SOUTH_EAST,
-    SOUTH,
-    SOUTH_WEST,
-    WEST,
-    NORTH_WEST,
+    NORTH = -8,
+    NORTH_EAST = -7,
+    EAST = 1,
+    SOUTH_EAST = 9,
+    SOUTH = 8,
+    SOUTH_WEST = 7,
+    WEST = -1,
+    NORTH_WEST = -9,
 } Direction;
 
-int direction_num(Direction dir);
 unsigned int bitscan_forward(BitBoard board);
 unsigned int bitscan_backward(BitBoard board);
 BitBoard get_ray(BoardPosition start_pos, Direction direction);

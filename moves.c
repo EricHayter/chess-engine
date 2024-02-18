@@ -18,20 +18,6 @@ Move *create_move(int to, int from, MoveFlag type)
     return move;
 }
 
-int dir_num(Direction direction)
-{
-    switch (direction) {
-    case NORTH: return -8; 
-    case NORTH_EAST: return -7; 
-    case EAST: return 1; 
-    case SOUTH_EAST: return 9; 
-    case SOUTH: return 8; 
-    case SOUTH_WEST: return 7; 
-    case WEST: return -1; 
-    case NORTH_WEST: return -9; 
-    }
-}
-
 // really not optimal but works for now
 unsigned int bitscan_forward(BitBoard board)
 {
@@ -63,7 +49,7 @@ BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction di
     BitBoard blockers = occupied & ray;
     unsigned int nearest_blocker;
     if (blockers) {
-        if (dir_num(direction) > 0) // moving up or west
+        if (direction > 0) // moving up or west
             nearest_blocker = bitscan_backward(blockers);
         else
             nearest_blocker = bitscan_forward(blockers);
@@ -77,7 +63,7 @@ BitBoard get_ray(BoardPosition start_pos, Direction direction)
 {
     BitBoard ray = set_bit(0ull, start_pos);
     unsigned int pos = start_pos;
-    int direction_value = dir_num(direction);
+    int direction_value = direction;
     BitBoard bounds;
     switch (direction) {
     case NORTH: 
@@ -115,65 +101,66 @@ BitBoard get_ray(BoardPosition start_pos, Direction direction)
 }
 
 
-BitBoard king_moves(BoardPosition position)
+void king_moves(BoardPosition position)
 {   
+
     BitBoard start = set_bit(0ull, position);
     BitBoard moves = (BitBoard) 0ull;
 
     // north moves
     if (start & NOT_8_RANK)
-        moves = set_bit(moves, position + dir_num(NORTH));
+        moves = set_bit(moves, position + NORTH);
     if (start & NOT_8_RANK & NOT_A_FILE)
-        moves = set_bit(moves, position + dir_num(NORTH_WEST));
+        moves = set_bit(moves, position + NORTH_WEST);
     if (start & NOT_8_RANK & NOT_H_FILE)
-        moves = set_bit(moves, position + dir_num(NORTH_EAST));
+        moves = set_bit(moves, position + NORTH_EAST);
 
     // horizontal moves
     if (start & NOT_H_FILE)
-        moves = set_bit(moves, position + dir_num(EAST));
+        moves = set_bit(moves, position + EAST);
     if (start & NOT_A_FILE)
-        moves = set_bit(moves, position + dir_num(WEST));
+        moves = set_bit(moves, position + WEST);
 
     // south moves
     if (start & NOT_1_RANK)
-        moves = set_bit(moves, position + dir_num(SOUTH));
+        moves = set_bit(moves, position + SOUTH);
     if (start & NOT_1_RANK & NOT_A_FILE)
-        moves = set_bit(moves, position + dir_num(SOUTH_WEST));
+        moves = set_bit(moves, position + SOUTH_WEST);
     if (start & NOT_1_RANK & NOT_H_FILE)
-        moves = set_bit(moves, position + dir_num(SOUTH_EAST));
+        moves = set_bit(moves, position + SOUTH_EAST);
 
     return moves;
 }
 
 
-BitBoard knight_moves(BoardPosition position)
+void knight_moves(Board* board, BoardPosition position)
 {   
     BitBoard start = set_bit(0ull, position);
     BitBoard moves = (BitBoard) 0ull;
 
     // north moves
     if (start & NOT_78_RANK & NOT_H_FILE) 
-        moves = set_bit(moves, position + dir_num(NORTH) + dir_num(NORTH_EAST));
+        moves = set_bit(moves, position + NORTH + NORTH_EAST);
     if (start & NOT_78_RANK & NOT_A_FILE) 
-        moves = set_bit(moves, position + dir_num(NORTH) + dir_num(NORTH_WEST));
+        moves = set_bit(moves, position + NORTH + NORTH_WEST);
 
     // east moves
     if (start & NOT_GH_FILE & NOT_8_RANK)
-        moves = set_bit(moves, position + dir_num(EAST) + dir_num(NORTH_EAST));
+        moves = set_bit(moves, position + EAST + NORTH_EAST);
     if (start & NOT_GH_FILE & NOT_1_RANK)
-        moves = set_bit(moves, position + dir_num(EAST) + dir_num(SOUTH_EAST));
+        moves = set_bit(moves, position + EAST + SOUTH_EAST);
 
     // south moves
     if (start & NOT_12_RANK & NOT_H_FILE)
-        moves = set_bit(moves, position + dir_num(SOUTH) + dir_num(SOUTH_EAST));
+        moves = set_bit(moves, position + SOUTH + SOUTH_EAST);
     if (start & NOT_12_RANK & NOT_A_FILE)
-        moves = set_bit(moves, position + dir_num(SOUTH) + dir_num(SOUTH_WEST));
+        moves = set_bit(moves, position + SOUTH + SOUTH_WEST);
 
     // west moves
     if (start & NOT_AB_FILE & NOT_8_RANK)
-        moves = set_bit(moves, position + dir_num(WEST) + dir_num(NORTH_WEST));
+        moves = set_bit(moves, position + WEST + NORTH_WEST);
     if (start & NOT_AB_FILE & NOT_1_RANK)
-        moves = set_bit(moves, position + dir_num(WEST) + dir_num(SOUTH_WEST));
+        moves = set_bit(moves, position + WEST + SOUTH_WEST);
  
     return moves;
 }
@@ -186,15 +173,15 @@ BitBoard pawn_pushes(BoardPosition position, Color to_move)
     switch (to_move) {
     case WHITE:
         if (start & FILE_2) 
-            moves = set_bit(moves, position + 2 * dir_num(NORTH));
+            moves = set_bit(moves, position + 2 * NORTH);
         if (start & NOT_8_RANK)
-            moves = set_bit(moves, position + dir_num(NORTH)); 
+            moves = set_bit(moves, position + NORTH); 
         break;
     case BLACK:
         if (start & FILE_7) 
-            moves = set_bit(moves, position + 2 * dir_num(SOUTH));
+            moves = set_bit(moves, position + 2 * SOUTH);
         if (start & NOT_1_RANK)
-            moves = set_bit(moves, position + dir_num(SOUTH)); 
+            moves = set_bit(moves, position + SOUTH); 
         break;
     }
     
@@ -210,17 +197,17 @@ BitBoard pawn_attacks(BoardPosition position, Color to_move)
     case WHITE:
         if (start & NOT_8_RANK) {
             if (start & NOT_H_FILE)
-                moves = set_bit(moves, position + dir_num(NORTH_EAST));
+                moves = set_bit(moves, position + NORTH_EAST);
             if (start & NOT_A_FILE)
-                moves = set_bit(moves, position + dir_num(NORTH_WEST));
+                moves = set_bit(moves, position + NORTH_WEST);
         }
         break;
     case BLACK:
         if (start & NOT_1_RANK) {
             if (start & NOT_H_FILE)
-                moves = set_bit(moves, position + dir_num(SOUTH_EAST));
+                moves = set_bit(moves, position + SOUTH_EAST);
             if (start & NOT_A_FILE)
-                moves = set_bit(moves, position + dir_num(SOUTH_WEST));
+                moves = set_bit(moves, position + SOUTH_WEST);
         }
         break;
     }

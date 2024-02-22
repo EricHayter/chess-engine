@@ -126,3 +126,13 @@ BitBoard get_enemy_squares(Board* board)
             board->wPawn;
     }
 }
+
+PieceType get_piece_type(Board* board, BoardPosition position)
+{
+    if (1 << position & (board->wKing | board->bKing)) return KING;
+    if (1 << position & (board->wQueen | board->bQueen)) return QUEEN;
+    if (1 << position & (board->wBishop | board->bBishop)) return BISHOP;
+    if (1 << position & (board->wKnight | board->bKnight)) return KNIGHT;
+    if (1 << position & (board->wRook | board->bRook)) return ROOK;
+    else return PAWN;
+}

@@ -14,8 +14,7 @@ typedef enum {
     BISHOP,
     KNIGHT,
     ROOK,
-    PAWN,
-    NONE_TYPE,
+    PAWN
 } PieceType;
 
 typedef enum {
@@ -80,5 +79,6 @@ BitBoard get_occupied(Board* board);
 BitBoard get_friendly_squares(Board* board);
 BitBoard get_friendly_squares(Board* board);
 BitBoard get_enemy_squares(Board* board);
+PieceType get_piece_type(Board* board, BoardPosition position);
 
 #endif

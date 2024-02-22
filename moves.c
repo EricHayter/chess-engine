@@ -216,8 +216,9 @@ BitBoard pawn_attacks(BoardPosition position, Color to_move)
 }
 
 
-BitBoard rook_moves(BitBoard occupied, BoardPosition position)
+BitBoard rook_moves(Board *board, BoardPosition position)
 {
+    BitBoard occupied = get_occupied(board);
     BitBoard moves = 0ull;
     moves |= get_ray_attacks(occupied, position, NORTH);
     moves |= get_ray_attacks(occupied, position, EAST);
@@ -227,10 +228,9 @@ BitBoard rook_moves(BitBoard occupied, BoardPosition position)
 }
 
 
-void bishop_moves(MoveList* movelist, Board* board, BoardPosition origin)
+BitBoard bishop_moves(Board* board, BoardPosition origin)
 {
     BitBoard moves = 0ull;
-    BitBoard enemy = get_enemy_squares(board);
     BitBoard occupied = get_occupied(board);
 
     moves |= get_ray_attacks(occupied, origin, NORTH_EAST);
@@ -238,22 +238,13 @@ void bishop_moves(MoveList* movelist, Board* board, BoardPosition origin)
     moves |= get_ray_attacks(occupied, origin, NORTH_WEST);
     moves |= get_ray_attacks(occupied, origin, SOUTH_WEST);
 
-    BoardPosition attack_square;
-    while (moves) {
-        attack_square = LSB(moves); 
-        moves = reset_bit(moves, attack_square);
-
-        if (set_bit(0ull, attack_square) & enemy) {
-            movelist_push(movelist, create_move(origin, attack_square, CAPTURE));
-        } else if (set_bit(0ull, attack_square) & ~occupied) {
-            movelist_push(movelist, create_move(origin, attack_square, QUIET_MOVE));
-        }
-    }
+    return moves;
 }
 
 
-BitBoard queen_moves(BitBoard occupied, BoardPosition position)
+BitBoard queen_moves(Board* board, BoardPosition position)
 {
+    BitBoard occupied = get_occupied(board);
     return bishop_moves(occupied, position) | rook_moves(occupied, position);
 }
 
@@ -261,23 +252,22 @@ BitBoard queen_moves(BitBoard occupied, BoardPosition position)
 // this silly
 bool is_checked(Board* board) 
 {
-    BitBoard occupied = get_occupied(board);
     unsigned int king_pos;
     switch (board->turn) {
     case WHITE:
         king_pos = LSB(board->wKing);
-        if (queen_moves(occupied, king_pos) & board->bQueen) return true;
-        if (rook_moves(occupied, king_pos) & board->bRook) return true;
-        if (bishop_moves(occupied, king_pos) & board->bBishop) return true;
+        if (queen_moves(board, king_pos) & board->bQueen) return true;
+        if (rook_moves(board, king_pos) & board->bRook) return true;
+        if (bishop_moves(board, king_pos) & board->bBishop) return true;
         if (knight_moves(king_pos) & board->bKnight) return true;
         if (pawn_attacks(king_pos, WHITE) & board->bPawn) return true;
         if (king_moves(king_pos) & board->bKing) return true;
         break;
     case BLACK:
         king_pos = LSB(board->bKing);
-        if (queen_moves(occupied, king_pos) & board->wQueen) return true;
-        if (rook_moves(occupied, king_pos) & board->wRook) return true;
-        if (bishop_moves(occupied, king_pos) & board->wBishop) return true;
+        if (queen_moves(board, king_pos) & board->wQueen) return true;
+        if (rook_moves(board, king_pos) & board->wRook) return true;
+        if (bishop_moves(board, king_pos) & board->wBishop) return true;
         if (knight_moves(king_pos) & board->wKnight) return true;
         if (king_moves(king_pos) & board->wKing) return true;
         break;
@@ -329,54 +319,4 @@ Board *make_move(Board* board, Move *move)
     *pieceBoard = set_bit(*pieceBoard, move->to);
 
     return NULL;
-}
-
-ArrayList *get_moves(Board* board)
-{
-    BitBoard occupied = get_occupied(board);
-    BitBoard vacant = get_vacant_squares(board);
-    BitBoard white_pieces = get_white_pieces(board);
-    BitBoard black_pieces = get_black_pieces(board);
-    ArrayList* move_list = arraylist_create();
-
-    switch (board->turn) {
-    case WHITE:
-        for (int square = 0; square < 64; square++) { // check each square for a white piece
-            if (board->wKing >> square & 1) {
-               classify_moves(move_list, square, 
-                       king_moves(square), vacant, black_pieces);
-               classify_moves(move_list, square, 
-                       queen_moves(occupied, square), vacant, black_pieces);
-               classify_moves(move_list, square, 
-                       bishop_moves(occupied, square), vacant, black_pieces);
-               classify_moves(move_list, square, 
-                       knight_moves(square), vacant, black_pieces);
-               classify_moves(move_list, square, 
-                       rook_moves(occupied, square), vacant, black_pieces);
-               // add extra edge cases (i.e. pawn promo, en pessant, castle)
-            }
-        }
-
-        break;
-    case BLACK:
-        for (int square = 0; square < 64; square++) { // check each square for a white piece
-            if (board->wKing >> square & 1) {
-               classify_moves(move_list, square, 
-                       king_moves(square), vacant, white_pieces);
-               classify_moves(move_list, square, 
-                       queen_moves(occupied, square), vacant, white_pieces);
-               classify_moves(move_list, square, 
-                       bishop_moves(occupied, square), vacant, white_pieces);
-               classify_moves(move_list, square, 
-                       knight_moves(square), vacant, white_pieces);
-               classify_moves(move_list, square, 
-                       rook_moves(occupied, square), vacant, white_pieces);
-               // add extra edge cases (i.e. pawn promo, en pessant, castle)
-            }
-        }
-
-        break;
-    }
-
-    return move_list;
 }

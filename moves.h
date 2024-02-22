@@ -2,7 +2,7 @@
 #define MOVES_H
 
 #include "board.h"
-#include "arraylist.h"
+#include "movelist.h"
 
 typedef enum {
     QUIET_MOVE,
@@ -46,10 +46,11 @@ BitBoard get_ray_moves(BitBoard occupied, BoardPosition position, Direction dire
 BitBoard get_negative_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
 BitBoard get_positive_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
 
+Move *create_move(BoardPosition to, BoardPosition from, MoveFlag type);
 BitBoard king_moves(BoardPosition position);
 BitBoard queen_moves(BitBoard board, BoardPosition position);
 BitBoard rook_moves(BitBoard board, BoardPosition position);
-BitBoard bishop_moves(BitBoard occupied, BoardPosition position);
+void bishop_moves(MoveList *movelist, Board *board, BoardPosition position);
 BitBoard queen_moves(BitBoard occupied, BoardPosition position);
 BitBoard pawn_attacks(BoardPosition position, Color to_move);
 BitBoard pawn_pushes(BoardPosition position, Color to_move);

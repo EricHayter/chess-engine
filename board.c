@@ -63,27 +63,6 @@ BitBoard get_occupied(Board* board)
     return get_white_pieces(board) | get_black_pieces(board);
 }
 
-BitBoard get_white_pieces(Board* board)
-{
-    return board->wKing |
-        board->wQueen |
-        board->wBishop |
-        board->wKnight |
-        board->wRook |
-        board->wPawn;
-}
-
-BitBoard get_black_pieces(Board* board)
-{
-    return board->bKing |
-        board->bQueen |
-        board->bBishop |
-        board->bKnight |
-        board->bRook |
-        board->bPawn;
-
-}
-
 BitBoard get_vacant_squares(Board* board)
 {
     return ~get_occupied(board);
@@ -106,3 +85,44 @@ void bitboard_print(BitBoard board)
 }
 
 
+BitBoard get_friendly_squares(Board* board)
+{
+    switch (board->turn)
+    {
+    case WHITE:
+        return board->wKing |
+            board->wQueen |
+            board->wBishop |
+            board->wKnight |
+            board->wRook |
+            board->wPawn;
+    case BLACK:
+        return board->bKing |
+            board->bQueen |
+            board->bBishop |
+            board->bKnight |
+            board->bRook |
+            board->bPawn;
+    }
+}
+
+BitBoard get_enemy_squares(Board* board)
+{
+    switch (board->turn)
+    {
+    case WHITE:
+        return board->bKing |
+            board->bQueen |
+            board->bBishop |
+            board->bKnight |
+            board->bRook |
+            board->bPawn;
+    case BLACK:
+        return board->wKing |
+            board->wQueen |
+            board->wBishop |
+            board->wKnight |
+            board->wRook |
+            board->wPawn;
+    }
+}

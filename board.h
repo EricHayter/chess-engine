@@ -77,8 +77,8 @@ BitBoard set_bit(BitBoard bitboard, int position);
 BitBoard reset_bit(BitBoard bitboard, int position);
 
 BitBoard get_occupied(Board* board);
-BitBoard get_vacant_squares(Board* board);
-BitBoard get_white_pieces(Board* board);
-BitBoard get_black_pieces(Board* board);
+BitBoard get_friendly_squares(Board* board);
+BitBoard get_friendly_squares(Board* board);
+BitBoard get_enemy_squares(Board* board);
 
 #endif

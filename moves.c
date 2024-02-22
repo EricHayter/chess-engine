@@ -1,11 +1,11 @@
 #include "moves.h"
+#include "movelist.h"
 #include "board.h"
-#include "arraylist.h"
 #include <stdlib.h>
 #include <assert.h>
 
 
-Move *create_move(int to, int from, MoveFlag type)
+Move *create_move(BoardPosition to, BoardPosition from, MoveFlag type)
 {
     Move *move = malloc(sizeof(Move));
     if (!move) { // this is bad but we will keep it for now
@@ -19,7 +19,7 @@ Move *create_move(int to, int from, MoveFlag type)
 }
 
 // really not optimal but works for now
-unsigned int bitscan_forward(BitBoard board)
+unsigned int LSB(BitBoard board)
 {
     assert(board != 0);
     unsigned int i = 0;
@@ -31,7 +31,7 @@ unsigned int bitscan_forward(BitBoard board)
 }
 
 // these are almost certainly too slow
-unsigned int bitscan_backward(BitBoard board)
+unsigned int MSB(BitBoard board)
 {
     assert(board != 0);
     unsigned int i = 0;
@@ -50,9 +50,9 @@ BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction di
     unsigned int nearest_blocker;
     if (blockers) {
         if (direction > 0) // moving up or west
-            nearest_blocker = bitscan_backward(blockers);
+            nearest_blocker = MSB(blockers);
         else
-            nearest_blocker = bitscan_forward(blockers);
+            nearest_blocker = LSB(blockers);
         ray ^= get_ray(nearest_blocker, direction);
     }
     return ray;
@@ -101,7 +101,7 @@ BitBoard get_ray(BoardPosition start_pos, Direction direction)
 }
 
 
-void king_moves(BoardPosition position)
+BitBoard king_moves(BoardPosition position)
 {   
 
     BitBoard start = set_bit(0ull, position);
@@ -133,7 +133,7 @@ void king_moves(BoardPosition position)
 }
 
 
-void knight_moves(Board* board, BoardPosition position)
+BitBoard knight_moves(Board* board, BoardPosition position)
 {   
     BitBoard start = set_bit(0ull, position);
     BitBoard moves = (BitBoard) 0ull;
@@ -227,14 +227,28 @@ BitBoard rook_moves(BitBoard occupied, BoardPosition position)
 }
 
 
-BitBoard bishop_moves(BitBoard occupied, BoardPosition position)
+void bishop_moves(MoveList* movelist, Board* board, BoardPosition origin)
 {
     BitBoard moves = 0ull;
-    moves |= get_ray_attacks(occupied, position, NORTH_EAST);
-    moves |= get_ray_attacks(occupied, position, SOUTH_EAST);
-    moves |= get_ray_attacks(occupied, position, NORTH_WEST);
-    moves |= get_ray_attacks(occupied, position, SOUTH_WEST);
-    return moves;
+    BitBoard enemy = get_enemy_squares(board);
+    BitBoard occupied = get_occupied(board);
+
+    moves |= get_ray_attacks(occupied, origin, NORTH_EAST);
+    moves |= get_ray_attacks(occupied, origin, SOUTH_EAST);
+    moves |= get_ray_attacks(occupied, origin, NORTH_WEST);
+    moves |= get_ray_attacks(occupied, origin, SOUTH_WEST);
+
+    BoardPosition attack_square;
+    while (moves) {
+        attack_square = LSB(moves); 
+        moves = reset_bit(moves, attack_square);
+
+        if (set_bit(0ull, attack_square) & enemy) {
+            movelist_push(movelist, create_move(origin, attack_square, CAPTURE));
+        } else if (set_bit(0ull, attack_square) & ~occupied) {
+            movelist_push(movelist, create_move(origin, attack_square, QUIET_MOVE));
+        }
+    }
 }
 
 
@@ -251,7 +265,7 @@ bool is_checked(Board* board)
     unsigned int king_pos;
     switch (board->turn) {
     case WHITE:
-        king_pos = bitscan_forward(board->wKing);
+        king_pos = LSB(board->wKing);
         if (queen_moves(occupied, king_pos) & board->bQueen) return true;
         if (rook_moves(occupied, king_pos) & board->bRook) return true;
         if (bishop_moves(occupied, king_pos) & board->bBishop) return true;
@@ -260,7 +274,7 @@ bool is_checked(Board* board)
         if (king_moves(king_pos) & board->bKing) return true;
         break;
     case BLACK:
-        king_pos = bitscan_forward(board->bKing);
+        king_pos = LSB(board->bKing);
         if (queen_moves(occupied, king_pos) & board->wQueen) return true;
         if (rook_moves(occupied, king_pos) & board->wRook) return true;
         if (bishop_moves(occupied, king_pos) & board->wBishop) return true;

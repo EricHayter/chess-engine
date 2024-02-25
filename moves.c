@@ -165,8 +165,10 @@ BitBoard knight_moves(Board* board, BoardPosition position)
     return moves;
 }
 
-BitBoard pawn_pushes(BoardPosition position, Color to_move)
+BitBoard pawn_pushes(Board* board, BoardPosition position)
 {
+    Color to_move = board->turn;
+    BitBoard occupied = get_occupied(board);
     BitBoard start = set_bit(0ull, position);
     BitBoard moves = 0ull;
 
@@ -174,8 +176,6 @@ BitBoard pawn_pushes(BoardPosition position, Color to_move)
     case WHITE:
         if (start & FILE_2) 
             moves = set_bit(moves, position + 2 * NORTH);
-        if (start & NOT_8_RANK)
-            moves = set_bit(moves, position + NORTH); 
         break;
     case BLACK:
         if (start & FILE_7) 
@@ -188,8 +188,9 @@ BitBoard pawn_pushes(BoardPosition position, Color to_move)
     return moves;
 }
 
-BitBoard pawn_attacks(BoardPosition position, Color to_move)
+BitBoard pawn_attacks(Board* board, BoardPosition position)
 {
+    Color to_move = board->turn;
     BitBoard start = set_bit(0ull, position);
     BitBoard moves = 0ull;
 
@@ -274,23 +275,6 @@ bool is_checked(Board* board)
     }
     
     return false;
-}
-
-// Given a list of possible moves and the location of friendly and
-// non-friendly pieces add move instances to the move_list arraylist.
-void classify_moves(ArrayList *move_list, int original_pos, BitBoard moves, BitBoard vacant, BitBoard enemy)
-{
-    ArrayListError err;
-    assert(!move_list);
-    enemy |= moves;
-    vacant |= moves;
-
-    for (int square = 0; square < 64; square++) { // iterate through all the given possible moves
-        if (enemy & (1 << square))
-            arraylist_push(move_list, create_move(square, original_pos, CAPTURE));
-        else if (vacant & (1 << square))
-            arraylist_push(move_list, create_move(square, original_pos, QUIET_MOVE));
-    }
 }
 
 Board *make_move(Board* board, Move *move)

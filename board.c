@@ -12,8 +12,8 @@ const BitBoard NOT_8_RANK = (BitBoard) 18446744073709551360ull;
 const BitBoard NOT_12_RANK = (BitBoard) 281474976710655ull;
 const BitBoard NOT_78_RANK = (BitBoard) 18446744073709486080ull;
 
-const BitBoard FILE_2 = 71776119061217280ull; 
-const BitBoard FILE_7 = 65280ull; 
+const BitBoard RANK_2 = 71776119061217280ull; 
+const BitBoard RANK_7 = 65280ull; 
 
 BitBoard get_bit(BitBoard bitboard, int position) {
     return bitboard & (1ull << position);
@@ -27,9 +27,10 @@ BitBoard reset_bit(BitBoard bitboard, int position) {
     return bitboard & ~(1ull << position);
 }
 
-Board *copy_board(const Board *board) {
+Board *copy_board(const Board *board) 
+{
   // creates a copy of a given boardstate
-  Board *new_board = malloc(sizeof(Board *));
+  Board *new_board = malloc(sizeof(Board));
   new_board->wKing = board->wKing;
   new_board->wQueen = board->wQueen;
   new_board->wBishop = board->wBishop;
@@ -45,6 +46,12 @@ Board *copy_board(const Board *board) {
   return new_board;
 }
 
+Board *init_board()
+{
+    Board *board = malloc(sizeof(Board));
+    return board;
+}
+
 
 /*
 "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
@@ -58,14 +65,14 @@ Board *copy_board(const Board *board) {
 */
 
 
-BitBoard get_occupied(Board* board)
+BitBoard get_occupied_squares(Board* board)
 {
-    return get_white_pieces(board) | get_black_pieces(board);
+    return get_friendly_squares(board) | get_enemy_squares(board);
 }
 
 BitBoard get_vacant_squares(Board* board)
 {
-    return ~get_occupied(board);
+    return ~get_occupied_squares(board);
 }
     
 

@@ -36,6 +36,8 @@ typedef enum {
 
 typedef struct {
     Color turn;
+    BoardPosition en_passant_square; // starting position of pawn that made
+                                     // en passant move (o if no move)
     bool castleKSide;        // Can castle on king side
     bool castleQSide;        // Can castle of queen side
     BitBoard doublePawnMove; // location of pawn that moved 2 squares
@@ -53,6 +55,8 @@ typedef struct {
     BitBoard bPawn;
 } Board;
 
+Board *init_board();
+
 typedef struct {
     PieceType pieceType;
     Color color;
@@ -68,15 +72,15 @@ const extern BitBoard NOT_8_RANK;
 const extern BitBoard NOT_12_RANK;;
 const extern BitBoard NOT_78_RANK;
 
-const extern BitBoard FILE_2;
-const extern BitBoard FILE_7;
+const extern BitBoard RANK_2;
+const extern BitBoard RANK_7;
 
 BitBoard get_bit(BitBoard bitboard, int position);
 BitBoard set_bit(BitBoard bitboard, int position);
 BitBoard reset_bit(BitBoard bitboard, int position);
 
-BitBoard get_occupied(Board* board);
-BitBoard get_friendly_squares(Board* board);
+BitBoard get_occupied_squares(Board* board);
+BitBoard get_vacant_squares(Board* board);
 BitBoard get_friendly_squares(Board* board);
 BitBoard get_enemy_squares(Board* board);
 PieceType get_piece_type(Board* board, BoardPosition position);

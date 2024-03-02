@@ -8,12 +8,12 @@ void add_moves(MoveList *movelist, Board *board, BoardPosition origin)
 
     PieceType type = get_piece_type(board, origin);
     BitBoard enemy = get_enemy_squares(board);
-    BitBoard occupied = get_occupied(board);
+    BitBoard occupied = get_occupied_squares(board);
     BitBoard moves;
 
     switch (type) {
     case KING:
-       moves = king_moves(origin); 
+       moves = king_moves(board, origin); 
        break;
     case QUEEN:
        moves = queen_moves(board, origin);
@@ -28,8 +28,8 @@ void add_moves(MoveList *movelist, Board *board, BoardPosition origin)
        moves = rook_moves(board, origin);
        break;
     case PAWN: // we don't handle the pawn moves here
-       moves = pawn_moves(board, origin) | pawn_attacks(board, origin);
-       return;
+       moves = pawn_pushes(board, origin) | pawn_attacks(board, origin);
+       break;
     }
 
     BoardPosition attack_square;

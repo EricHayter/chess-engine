@@ -63,20 +63,9 @@ double evaluate(Board *board)
 
 int main() 
 {
-    BitBoard b = 0ull;
-    b = set_bit(b, a2);
-    // bitboard_print(b);
-    // printf("%d\n", bitscan_forward(b));
-    // printf("%d\n", bitscan_backward(b));
-    // b = set_bit(b, a4) & get_ray(a2, NORTH);
-    // unsigned int blocked = bitscan_backward(b);
-    // bitboard_print(get_ray(blocked, NORTH));
-    // bitboard_print(set_bit(0ull, blocked));
-    // BitBoard rook_moves = get_ray(a2, NORTH);
-    // rook_moves |= get_ray(a2, EAST);
-    // rook_moves |= get_ray(a2, SOUTH);
-    // rook_moves |= get_ray(a2, WEST);
-    // bitboard_print(rook_moves);
-    bitboard_print(rook_moves(b, a2));
+    Board *board = init_board();
+    board->turn = WHITE;
+    board->wPawn = set_bit(0ull, b3);
+    bitboard_print(pawn_pushes(board, b2));
     return 0;
 }

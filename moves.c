@@ -1,5 +1,4 @@
 #include "moves.h"
-#include "movelist.h"
 #include "board.h"
 #include <stdlib.h>
 #include <assert.h>
@@ -166,58 +165,64 @@ BitBoard knight_moves(Board* board, BoardPosition position)
 
 BitBoard pawn_pushes(Board* board, BoardPosition position)
 {
-    Color to_move = board->turn;
-    BitBoard occupied = get_occupied(board);
-    BitBoard start = set_bit(0ull, position);
-    BitBoard moves = 0ull;
-
-    switch (to_move) {
+    BitBoard moves = set_bit(0ull, position);
+    BitBoard vacant = get_vacant_squares(board);
+    BitBoard move;
+    switch (board->turn) {
     case WHITE:
-        if (start & FILE_2) 
-            moves = set_bit(moves, position + 2 * NORTH);
+        move = set_bit(0ull, position + NORTH);
+        if (move & vacant) {
+            moves |= move;
+            move = set_bit(0ull, position + 2 * NORTH);
+            if (moves & RANK_2) // check if on right rank
+                moves |= move;
+        }
         break;
     case BLACK:
-        if (start & FILE_7) 
-            moves = set_bit(moves, position + 2 * SOUTH);
-        if (start & NOT_1_RANK)
-            moves = set_bit(moves, position + SOUTH); 
+        move = set_bit(0ull, position + SOUTH);
+        if (move & vacant) {
+            moves |= move;
+            move = set_bit(0ull, position + 2 * SOUTH);
+            if (moves & RANK_7) // check if on right rank
+                moves |= move;
+        }
         break;
     }
     
-    return moves;
+    return moves & vacant;
 }
 
+// PRECONDITION: pawns are never on the first or eighth rank
 BitBoard pawn_attacks(Board* board, BoardPosition position)
 {
-    Color to_move = board->turn;
-    BitBoard moves = set_bit(0ull, position);
+    BitBoard attack_targets = get_enemy_squares(board);
+    if (!board->en_passant_square) {
+        attack_targets |= set_bit(0ull, board->en_passant_square);
+    }
 
-    switch (to_move) {
+    BitBoard moves = set_bit(0ull, position);
+    switch (board->turn) {
     case WHITE:
-        if (moves & NOT_8_RANK) {
-            if (moves & NOT_H_FILE)
-                moves = set_bit(moves, position + NORTH_EAST);
-            if (moves & NOT_A_FILE)
-                moves = set_bit(moves, position + NORTH_WEST);
-        }
+        if (moves & NOT_H_FILE)
+            moves = set_bit(moves, position + NORTH_EAST);
+        if (moves & NOT_A_FILE)
+            moves = set_bit(moves, position + NORTH_WEST);
         break;
     case BLACK:
-        if (moves & NOT_1_RANK) {
-            if (moves & NOT_H_FILE)
-                moves = set_bit(moves, position + SOUTH_EAST);
-            if (moves & NOT_A_FILE)
-                moves = set_bit(moves, position + SOUTH_WEST);
-        }
+        if (moves & NOT_H_FILE)
+            moves = set_bit(moves, position + SOUTH_EAST);
+        if (moves & NOT_A_FILE)
+            moves = set_bit(moves, position + SOUTH_WEST);
         break;
     }
 
-    return moves & ~get_friendly_squares(board);
+    return moves & attack_targets;
 }
 
 
 BitBoard rook_moves(Board *board, BoardPosition position)
 {
-    BitBoard occupied = get_occupied(board);
+    BitBoard occupied = get_occupied_squares(board);
     BitBoard moves = 0ull;
     moves |= get_ray_attacks(occupied, position, NORTH);
     moves |= get_ray_attacks(occupied, position, EAST);
@@ -230,7 +235,7 @@ BitBoard rook_moves(Board *board, BoardPosition position)
 BitBoard bishop_moves(Board* board, BoardPosition origin)
 {
     BitBoard moves = 0ull;
-    BitBoard occupied = get_occupied(board);
+    BitBoard occupied = get_occupied_squares(board);
     moves |= get_ray_attacks(occupied, origin, NORTH_EAST);
     moves |= get_ray_attacks(occupied, origin, SOUTH_EAST);
     moves |= get_ray_attacks(occupied, origin, NORTH_WEST);
@@ -270,6 +275,7 @@ bool is_checked(Board* board)
         else if (knight_moves(board, king_pos) & board->wKnight) is_checked = true;
         else if (pawn_attacks(board, king_pos) & board->wKing) is_checked = true;
         else if (king_moves(board, king_pos) & board->wKing) is_checked = true;
+        board->turn = BLACK;
         break;
     }
     

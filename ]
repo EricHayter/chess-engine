@@ -252,31 +252,32 @@ BitBoard queen_moves(Board* board, BoardPosition position)
 
 bool is_square_attacked(Board *board, BoardPosition pos)
 {
-    bool is_attacked = false;
+    bool is_checked = false;
     switch (board->turn) {
     case WHITE:
         board->turn = BLACK; // view possible attacks from black POV
-        if (queen_moves(board, pos) & board->bQueen) is_attacked = true;
-        else if (rook_moves(board, pos) & board->bRook) is_attacked = true;
-        else if (bishop_moves(board, pos) & board->bBishop) is_attacked = true;
-        else if (knight_moves(board, pos) & board->bKnight) is_attacked = true;
-        else if (pawn_attacks(board, pos) & board->bPawn) is_attacked = true;
-        else if (king_moves(board, pos) & board->bKing) is_attacked = true;
+        if (queen_moves(board, pos) & board->bQueen) is_checked = true;
+        else if (rook_moves(board, pos) & board->bRook) is_checked = true;
+        else if (bishop_moves(board, pos) & board->bBishop) is_checked = true;
+        else if (knight_moves(board, pos) & board->bKnight) is_checked = true;
+        else if (pawn_attacks(board, pos) & board->bPawn) is_checked = true;
+        else if (king_moves(board, pos) & board->bKing) is_checked = true;
         board->turn = WHITE;
         break;
     case BLACK:
         board->turn = WHITE;
-        if (queen_moves(board, pos) & board->wQueen) is_attacked = true;
-        else if (rook_moves(board, pos) & board->wRook) is_attacked = true;
-        else if (bishop_moves(board, pos) & board->wBishop) is_attacked = true;
-        else if (knight_moves(board, pos) & board->wKnight) is_attacked = true;
-        else if (pawn_attacks(board, pos) & board->wKing) is_attacked = true;
-        else if (king_moves(board, pos) & board->wKing) is_attacked = true;
+        if (queen_moves(board, pos) & board->wQueen) is_checked = true;
+        else if (rook_moves(board, pos) & board->wRook) is_checked = true;
+        else if (bishop_moves(board, pos) & board->wBishop) is_checked = true;
+        else if (knight_moves(board, pos) & board->wKnight) is_checked = true;
+        else if (pawn_attacks(board, pos) & board->wKing) is_checked = true;
+        else if (king_moves(board, pos) & board->wKing) is_checked = true;
         board->turn = BLACK;
         break;
     }
     
-    return is_attacked;
+    return is_checked;
+
 }
 
 bool is_checked(Board* board) 
@@ -285,13 +286,18 @@ bool is_checked(Board* board)
     switch (board->turn) {
     case WHITE:
         king_pos = LSB(board->wKing);
+        else if (bishop_moves(board, king_pos) & board->bBishop) is_checked = true;
+        else if (knight_moves(board, king_pos) & board->bKnight) is_checked = true;
+        else if (pawn_attacks(board, king_pos) & board->bPawn) is_checked = true;
+        else if (king_moves(board, king_pos) & board->bKing) is_checked = true;
+        board->turn = WHITE;
         break;
     case BLACK:
         king_pos = LSB(board->bKing);
-        break;
-    }
 
-    return is_square_attacked(board, king_pos);
+                break;
+    }
+    
 }
 
 Board *make_move(Board* board, Move *move)

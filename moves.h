@@ -54,4 +54,7 @@ BitBoard knight_moves(Board *board, BoardPosition position);
 BitBoard pawn_attacks(Board *board, BoardPosition position);
 BitBoard pawn_pushes(Board *board, BoardPosition position);
 
+bool is_square_attacked(Board *board, BoardPosition pos);
+bool is_checked(Board* board);
+
 #endif

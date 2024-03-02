@@ -101,11 +101,10 @@ BitBoard get_ray(BoardPosition start_pos, Direction direction)
 }
 
 
-BitBoard king_moves(BoardPosition position)
+BitBoard king_moves(Board *board, BoardPosition position)
 {   
-
     BitBoard start = set_bit(0ull, position);
-    BitBoard moves = (BitBoard) 0ull;
+    BitBoard moves = 0ull;
 
     // north moves
     if (start & NOT_8_RANK)
@@ -129,7 +128,7 @@ BitBoard king_moves(BoardPosition position)
     if (start & NOT_1_RANK & NOT_H_FILE)
         moves = set_bit(moves, position + SOUTH_EAST);
 
-    return moves;
+    return moves & ~get_friendly_squares(board);
 }
 
 
@@ -162,7 +161,7 @@ BitBoard knight_moves(Board* board, BoardPosition position)
     if (start & NOT_AB_FILE & NOT_1_RANK)
         moves = set_bit(moves, position + WEST + SOUTH_WEST);
  
-    return moves;
+    return moves & ~get_friendly_squares(board);
 }
 
 BitBoard pawn_pushes(Board* board, BoardPosition position)
@@ -191,29 +190,28 @@ BitBoard pawn_pushes(Board* board, BoardPosition position)
 BitBoard pawn_attacks(Board* board, BoardPosition position)
 {
     Color to_move = board->turn;
-    BitBoard start = set_bit(0ull, position);
-    BitBoard moves = 0ull;
+    BitBoard moves = set_bit(0ull, position);
 
     switch (to_move) {
     case WHITE:
-        if (start & NOT_8_RANK) {
-            if (start & NOT_H_FILE)
+        if (moves & NOT_8_RANK) {
+            if (moves & NOT_H_FILE)
                 moves = set_bit(moves, position + NORTH_EAST);
-            if (start & NOT_A_FILE)
+            if (moves & NOT_A_FILE)
                 moves = set_bit(moves, position + NORTH_WEST);
         }
         break;
     case BLACK:
-        if (start & NOT_1_RANK) {
-            if (start & NOT_H_FILE)
+        if (moves & NOT_1_RANK) {
+            if (moves & NOT_H_FILE)
                 moves = set_bit(moves, position + SOUTH_EAST);
-            if (start & NOT_A_FILE)
+            if (moves & NOT_A_FILE)
                 moves = set_bit(moves, position + SOUTH_WEST);
         }
         break;
     }
 
-    return moves;
+    return moves & ~get_friendly_squares(board);
 }
 
 
@@ -225,7 +223,7 @@ BitBoard rook_moves(Board *board, BoardPosition position)
     moves |= get_ray_attacks(occupied, position, EAST);
     moves |= get_ray_attacks(occupied, position, SOUTH);
     moves |= get_ray_attacks(occupied, position, WEST);
-    return moves;
+    return moves & ~get_friendly_squares(board);
 }
 
 
@@ -233,48 +231,49 @@ BitBoard bishop_moves(Board* board, BoardPosition origin)
 {
     BitBoard moves = 0ull;
     BitBoard occupied = get_occupied(board);
-
     moves |= get_ray_attacks(occupied, origin, NORTH_EAST);
     moves |= get_ray_attacks(occupied, origin, SOUTH_EAST);
     moves |= get_ray_attacks(occupied, origin, NORTH_WEST);
     moves |= get_ray_attacks(occupied, origin, SOUTH_WEST);
-
-    return moves;
+    return moves & ~get_friendly_squares(board);
 }
 
 
 BitBoard queen_moves(Board* board, BoardPosition position)
 {
-    BitBoard occupied = get_occupied(board);
-    return bishop_moves(occupied, position) | rook_moves(occupied, position);
+    return bishop_moves(board, position) | rook_moves(board, position);
 }
 
 
-// this silly
 bool is_checked(Board* board) 
 {
-    unsigned int king_pos;
+    BoardPosition king_pos;
+    bool is_checked = false;
     switch (board->turn) {
     case WHITE:
+        board->turn = BLACK; // view possible attacks from black POV
         king_pos = LSB(board->wKing);
-        if (queen_moves(board, king_pos) & board->bQueen) return true;
-        if (rook_moves(board, king_pos) & board->bRook) return true;
-        if (bishop_moves(board, king_pos) & board->bBishop) return true;
-        if (knight_moves(king_pos) & board->bKnight) return true;
-        if (pawn_attacks(king_pos, WHITE) & board->bPawn) return true;
-        if (king_moves(king_pos) & board->bKing) return true;
+        if (queen_moves(board, king_pos) & board->bQueen) is_checked = true;
+        else if (rook_moves(board, king_pos) & board->bRook) is_checked = true;
+        else if (bishop_moves(board, king_pos) & board->bBishop) is_checked = true;
+        else if (knight_moves(board, king_pos) & board->bKnight) is_checked = true;
+        else if (pawn_attacks(board, king_pos) & board->bPawn) is_checked = true;
+        else if (king_moves(board, king_pos) & board->bKing) is_checked = true;
+        board->turn = WHITE;
         break;
     case BLACK:
+        board->turn = WHITE;
         king_pos = LSB(board->bKing);
-        if (queen_moves(board, king_pos) & board->wQueen) return true;
-        if (rook_moves(board, king_pos) & board->wRook) return true;
-        if (bishop_moves(board, king_pos) & board->wBishop) return true;
-        if (knight_moves(king_pos) & board->wKnight) return true;
-        if (king_moves(king_pos) & board->wKing) return true;
+        if (queen_moves(board, king_pos) & board->wQueen) is_checked = true;
+        else if (rook_moves(board, king_pos) & board->wRook) is_checked = true;
+        else if (bishop_moves(board, king_pos) & board->wBishop) is_checked = true;
+        else if (knight_moves(board, king_pos) & board->wKnight) is_checked = true;
+        else if (pawn_attacks(board, king_pos) & board->wKing) is_checked = true;
+        else if (king_moves(board, king_pos) & board->wKing) is_checked = true;
         break;
     }
     
-    return false;
+    return is_checked;
 }
 
 Board *make_move(Board* board, Move *move)

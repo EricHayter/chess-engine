@@ -41,17 +41,17 @@ unsigned int LSB(BitBoard board);
 unsigned int MSB(BitBoard board);
 BitBoard get_ray(BoardPosition start_pos, Direction direction);
 
-BitBoard get_ray_moves(BitBoard occupied, BoardPosition position, Direction direction);
+BitBoard get_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
 BitBoard get_negative_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
 BitBoard get_positive_ray_attacks(BitBoard occupied, BoardPosition position, Direction direction);
 
 Move *create_move(BoardPosition to, BoardPosition from, MoveFlag type);
-BitBoard king_moves(BoardPosition position);
+BitBoard king_moves(Board *board, BoardPosition position);
 BitBoard queen_moves(Board *board, BoardPosition position);
 BitBoard rook_moves(Board *board, BoardPosition position);
 BitBoard bishop_moves(Board *board, BoardPosition position);
-BitBoard knight_moves(Board* board, BoardPosition position);
-BitBoard pawn_attacks(BoardPosition position, Color to_move);
-BitBoard pawn_pushes(BoardPosition position, Color to_move);
+BitBoard knight_moves(Board *board, BoardPosition position);
+BitBoard pawn_attacks(Board *board, BoardPosition position);
+BitBoard pawn_pushes(Board *board, BoardPosition position);
 
 #endif

@@ -5,10 +5,8 @@
 // adds all moves to the movelist.
 void add_moves(MoveList *movelist, Board *board, BoardPosition origin)
 {
-
     PieceType type = get_piece_type(board, origin);
     BitBoard enemy = get_enemy_squares(board);
-    BitBoard occupied = get_occupied_squares(board);
     BitBoard moves;
 
     switch (type) {
@@ -38,11 +36,14 @@ void add_moves(MoveList *movelist, Board *board, BoardPosition origin)
         moves = reset_bit(moves, attack_square);
 
         if (set_bit(0ull, attack_square) & enemy) {
+            // pawn cases
+            if (type == PAWN) {
+            
+            }
             movelist_push(movelist, create_move(origin, attack_square, CAPTURE));
-        } else if (set_bit(0ull, attack_square) & ~occupied) {
+        } else {
             movelist_push(movelist, create_move(origin, attack_square, QUIET_MOVE));
         }
     }
-
 }
 

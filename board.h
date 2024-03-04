@@ -38,8 +38,7 @@ typedef struct {
     Color turn;
     BoardPosition en_passant_square; // starting position of pawn that made
                                      // en passant move (o if no move)
-    bool castleKSide;        // Can castle on king side
-    bool castleQSide;        // Can castle of queen side
+    bool castlingRights[4];
     BitBoard doublePawnMove; // location of pawn that moved 2 squares
     BitBoard wKing;
     BitBoard wQueen;
@@ -54,6 +53,13 @@ typedef struct {
     BitBoard bRook;
     BitBoard bPawn;
 } Board;
+
+typedef enum {
+    wKingSide,
+    wQueenSide,
+    bKingSide,
+    bQueenSide,
+} CastlingRight;
 
 Board *init_board();
 

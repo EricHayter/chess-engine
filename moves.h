@@ -47,6 +47,7 @@ BitBoard get_positive_ray_attacks(BitBoard occupied, BoardPosition position, Dir
 
 Move *create_move(BoardPosition to, BoardPosition from, MoveFlag type);
 BitBoard king_moves(Board *board, BoardPosition position);
+BitBoard castling_moves(Board *board);
 BitBoard queen_moves(Board *board, BoardPosition position);
 BitBoard rook_moves(Board *board, BoardPosition position);
 BitBoard bishop_moves(Board *board, BoardPosition position);

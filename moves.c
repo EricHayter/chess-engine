@@ -142,37 +142,41 @@ BitBoard castling_moves(Board *board)
 {
     BitBoard vacant = get_vacant_squares(board);
     BitBoard moves = 0ull;
-    if (board->castlingRights[wKingSide]) {
-        if (!is_square_attacked(board, c1) &&
-                !is_square_attacked(board, d1) &&  
-                (~vacant & set_bit(0ull, c1)) &&
-                (~vacant & set_bit(0ull, d1)))
-            moves |= set_bit(0ull, c1);
-    }
+    switch (board->turn) {
+    case WHITE:
+        if (board->castlingRights[wKingSide]) {
+            if (!is_square_attacked(board, c1) &&
+                    !is_square_attacked(board, d1) &&  
+                    (~vacant & set_bit(0ull, c1)) &&
+                    (~vacant & set_bit(0ull, d1)))
+                moves |= set_bit(0ull, c1);
+        }
 
-    if (board->castlingRights[wQueenSide]) {
-        if (!is_square_attacked(board, f1) &&
-                !is_square_attacked(board, g1) &&  
-                (~vacant & set_bit(0ull, f1)) &&
-                (~vacant & set_bit(0ull, g1)))
-            moves |= set_bit(0ull, g1);
-    }
+        if (board->castlingRights[wQueenSide]) {
+            if (!is_square_attacked(board, f1) &&
+                    !is_square_attacked(board, g1) &&  
+                    (~vacant & set_bit(0ull, f1)) &&
+                    (~vacant & set_bit(0ull, g1)))
+                moves |= set_bit(0ull, g1);
+        }
+        break;
+    case BLACK:
+        if (board->castlingRights[bKingSide]) {
+            if (!is_square_attacked(board, c8) &&
+                    !is_square_attacked(board, d8) &&  
+                    (~vacant & set_bit(0ull, c8)) &&
+                    (~vacant & set_bit(0ull, d8)))
+                moves |= set_bit(0ull, c8);
+        }
 
-
-    if (board->castlingRights[bKingSide]) {
-        if (!is_square_attacked(board, c8) &&
-                !is_square_attacked(board, d8) &&  
-                (~vacant & set_bit(0ull, c8)) &&
-                (~vacant & set_bit(0ull, d8)))
-            moves |= set_bit(0ull, c8);
-    }
-
-    if (board->castlingRights[bQueenSide]) {
-        if (!is_square_attacked(board, f8) &&
-                !is_square_attacked(board, g8) &&  
-                (~vacant & set_bit(0ull, f8)) &&
-                (~vacant & set_bit(0ull, g8)))
-            moves |= set_bit(0ull, g8);
+        if (board->castlingRights[bQueenSide]) {
+            if (!is_square_attacked(board, f8) &&
+                    !is_square_attacked(board, g8) &&  
+                    (~vacant & set_bit(0ull, f8)) &&
+                    (~vacant & set_bit(0ull, g8)))
+                moves |= set_bit(0ull, g8);
+        }
+        break;
     }
 
     return moves;

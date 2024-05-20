@@ -249,19 +249,19 @@ BitBoard pawn_pushes(Board* board, BoardPosition position)
 BitBoard pawn_attacks(Board* board, BoardPosition position)
 {
     BitBoard attack_targets = get_enemy_squares(board);
-    if (!board->en_passant_square) {
-        attack_targets |= set_bit(0ull, board->en_passant_square);
-    }
-
     BitBoard moves = set_bit(0ull, position);
     switch (board->turn) {
         case WHITE:
+            if (board->en_passant_square)
+                attack_targets |= set_bit(0ull, board->en_passant_square + NORTH);
             if (moves & NOT_H_FILE)
                 moves = set_bit(moves, position + NORTH_EAST);
             if (moves & NOT_A_FILE)
                 moves = set_bit(moves, position + NORTH_WEST);
             break;
         case BLACK:
+            if (board->en_passant_square)
+                attack_targets |= set_bit(0ull, board->en_passant_square + SOUTH);
             if (moves & NOT_H_FILE)
                 moves = set_bit(moves, position + SOUTH_EAST);
             if (moves & NOT_A_FILE)

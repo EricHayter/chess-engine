@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#define X86_INSTRUCTIONS true
 
 Move *create_move(BoardPosition to, BoardPosition from, MoveFlag type)
 {
@@ -21,24 +22,32 @@ Move *create_move(BoardPosition to, BoardPosition from, MoveFlag type)
 unsigned int LSB(BitBoard board)
 {
     assert(board != 0);
+    #if X86_INSTRUCTIONS
+    asm("bsf %rdi, %rax");
+    #else
     unsigned int i = 0;
     while (!(board & 1)) {
         board >>= 1;
         i++;
     }
     return i;
+    #endif
 }
 
 // these are almost certainly too slow
 unsigned int MSB(BitBoard board)
 {
     assert(board != 0);
+    #if X86_INSTRUCTIONS
+    asm("bsr %rdi, %rax");
+    #else
     unsigned int i = 0;
     while (board) {
         board <<= 1;
         i++;
     }
     return i;
+    #endif
 }
 
 

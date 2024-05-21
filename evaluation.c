@@ -63,9 +63,16 @@ double evaluate(Board *board)
 
 int main() 
 {
-    Board *board = init_board();
-    board->turn = WHITE;
-    board->wPawn = set_bit(0ull, b3);
-    bitboard_print(pawn_pushes(board, b2));
+//    Board *board = init_board();
+//    board->turn = WHITE;
+//    board->wPawn = set_bit(0ull, b3);
+//    bitboard_print(pawn_pushes(board, b2));
+//    printf("%d\n", a8);
+
+
+    for (int i = 0; i < 9; i++) {
+        bitboard_print(i,  
+    }
+
     return 0;
 }

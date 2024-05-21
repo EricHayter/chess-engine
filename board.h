@@ -4,9 +4,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef unsigned long long BitBoard;
+typedef unsigned long long U64;
 
-void bitboard_print(BitBoard board);
+void bitboard_print(U64 bb);
 
 typedef enum {
     KING,
@@ -39,19 +39,19 @@ typedef struct {
     BoardPosition en_passant_square; // starting position of pawn that made
                                      // en passant move (o if no move)
     bool castlingRights[4];
-    BitBoard doublePawnMove; // location of pawn that moved 2 squares
-    BitBoard wKing;
-    BitBoard wQueen;
-    BitBoard wBishop;
-    BitBoard wKnight;
-    BitBoard wRook;
-    BitBoard wPawn;
-    BitBoard bKing;
-    BitBoard bQueen;
-    BitBoard bBishop;
-    BitBoard bKnight;
-    BitBoard bRook;
-    BitBoard bPawn;
+    U64 doublePawnMove; // location of pawn that moved 2 squares
+    U64 wKing;
+    U64 wQueen;
+    U64 wBishop;
+    U64 wKnight;
+    U64 wRook;
+    U64 wPawn;
+    U64 bKing;
+    U64 bQueen;
+    U64 bBishop;
+    U64 bKnight;
+    U64 bRook;
+    U64 bPawn;
 } Board;
 
 typedef enum {
@@ -68,27 +68,27 @@ typedef struct {
     Color color;
 } Piece;
 
-const extern BitBoard NOT_H_FILE;
-const extern BitBoard NOT_A_FILE;
-const extern BitBoard NOT_AB_FILE;
-const extern BitBoard NOT_GH_FILE;
+const extern U64 NOT_H_FILE;
+const extern U64 NOT_A_FILE;
+const extern U64 NOT_AB_FILE;
+const extern U64 NOT_GH_FILE;
 
-const extern BitBoard NOT_1_RANK;
-const extern BitBoard NOT_8_RANK;
-const extern BitBoard NOT_12_RANK;;
-const extern BitBoard NOT_78_RANK;
+const extern U64 NOT_1_RANK;
+const extern U64 NOT_8_RANK;
+const extern U64 NOT_12_RANK;;
+const extern U64 NOT_78_RANK;
 
-const extern BitBoard RANK_2;
-const extern BitBoard RANK_7;
+const extern U64 RANK_2;
+const extern U64 RANK_7;
 
-BitBoard get_bit(BitBoard bitboard, int position);
-BitBoard set_bit(BitBoard bitboard, int position);
-BitBoard reset_bit(BitBoard bitboard, int position);
+U64 get_bit(U64 U64, int position);
+U64 set_bit(U64 U64, int position);
+U64 reset_bit(U64 U64, int position);
 
-BitBoard get_occupied_squares(Board* board);
-BitBoard get_vacant_squares(Board* board);
-BitBoard get_friendly_squares(Board* board);
-BitBoard get_enemy_squares(Board* board);
+U64 get_occupied_squares(Board* board);
+U64 get_vacant_squares(Board* board);
+U64 get_friendly_squares(Board* board);
+U64 get_enemy_squares(Board* board);
 PieceType get_piece_type(Board* board, BoardPosition position);
 
 #endif

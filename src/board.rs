@@ -1,6 +1,20 @@
 pub type BitBoard = u64;
 pub type Square = usize;
 
+pub fn square(col: &str, row: usize) -> Square {
+    match col {
+        "A" | "a" => (8 - row) * 8 + 0,
+        "B" | "b" => (8 - row) * 8 + 1,
+        "C" | "c" => (8 - row) * 8 + 2,
+        "D" | "d" => (8 - row) * 8 + 3,
+        "E" | "e" => (8 - row) * 8 + 4,
+        "F" | "f" => (8 - row) * 8 + 5,
+        "G" | "g" => (8 - row) * 8 + 6,
+        "H" | "h" => (8 - row) * 8 + 7,
+        _ => 0,
+    }
+}
+
 pub fn row(square: Square) -> usize {
     square / 8
 }

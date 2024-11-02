@@ -22,7 +22,7 @@ void init_distances()
 
 BitBoard set_position(BitBoard bb, Position pos)
 {
-	return bb | 1 << pos;
+	return bb | 1ull << pos;
 }
 
 void board_print(BitBoard bb)

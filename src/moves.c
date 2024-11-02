@@ -29,6 +29,17 @@ int is_good_square(Position start, Position stop)
 		DISTANCES[start][stop] <= 2;
 }
 
+void init_attacks()
+{
+	init_distances();
+	init_king_attacks();
+	init_bishop_attacks();
+	init_knight_attacks();
+	init_rook_attacks();
+	init_pawn_attacks();
+	init_queen_attacks();
+}
+
 void init_king_attacks()
 {
 	// ensure that our distance lookup table is setup
@@ -52,8 +63,13 @@ void init_queen_attacks()
 {
 	// ensure that our distance lookup table is setup
 	assert(distances_init);
+	assert(bishop_attacks_calculated);
+	assert(rook_attacks_calculated);
 	if (queen_attacks_calculated)
 		return;
+	for (int i = 0; i < NUM_SQUARES; i++)
+		QUEEN_ATTACKS[i] = BISHOP_ATTACKS[i] | ROOK_ATTACKS[i];
+	queen_attacks_calculated = 1;
 }
 
 void init_bishop_attacks()
@@ -62,6 +78,30 @@ void init_bishop_attacks()
 	assert(distances_init);
 	if (bishop_attacks_calculated)
 		return;
+	static const int BISHOP_DIRECTIONS[NUM_BISHOP_DIRECTIONS] = {
+		NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST,	
+	};
+
+	// ensure that our distance lookup table is setup
+	assert(distances_init);
+	if (rook_attacks_calculated)
+		return;
+
+	for (int start = 0; start < NUM_SQUARES; start++) {
+		BitBoard bb = EMPTY_BOARD;
+		for (int dir_num = 0; dir_num < NUM_BISHOP_DIRECTIONS; dir_num++) {
+			Direction dir = BISHOP_DIRECTIONS[dir_num];
+			Position pos = start;
+			Position next_pos = start + dir;			
+			while (is_good_square(pos, next_pos)) {
+				bb = set_position(bb, next_pos);	
+				pos = next_pos;
+				next_pos += dir;
+			}
+		}	
+		BISHOP_ATTACKS[start] = bb;
+	}
+	bishop_attacks_calculated = 1;
 }
 
 void init_knight_attacks()
@@ -87,6 +127,7 @@ void init_knight_attacks()
 		}
 		KNIGHT_ATTACKS[start] = bb;
 	}
+	knight_attacks_calculated = 1;
 }
 
 void init_rook_attacks()
@@ -143,5 +184,27 @@ void init_pawn_attacks()
 			bb = set_position(bb, start + NORTH_WEST);
 		PAWN_ATTACKS[WHITE][start] = bb;
 	}
+	pawn_attacks_calculated = 1;
 }
 
+int lsb(BitBoard bb)
+{
+	assert(bb != EMPTY_BOARD);
+	int i = 0;
+	while (!(bb & 1ull)) {
+		bb >>= 1;
+		i++;
+	}
+	return i;
+}
+
+int msb(BitBoard bb)
+{
+	assert(bb != EMPTY_BOARD);
+	int i = 63;
+	while (!(bb & (1ull << 63))) {
+		bb <<= 1;
+		i--;
+	}
+	return i;
+}

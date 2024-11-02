@@ -16,6 +16,7 @@ typedef enum {
 
 #define NUM_KNIGHT_DIRECTIONS 8
 #define NUM_ROOK_DIRECTIONS 4
+#define NUM_BISHOP_DIRECTIONS 4
 
 extern const Direction DIRECTIONS[NUM_DIRECTIONS];
 
@@ -34,9 +35,13 @@ extern BitBoard ROOK_ATTACKS[NUM_SQUARES];
 extern BitBoard PAWN_ATTACKS[NUM_COLORS][NUM_SQUARES];
 
 int is_good_square(Position start, Position stop);
+void init_attacks();
 void init_king_attacks();
 void init_queen_attacks();
 void init_bishop_attacks();
 void init_knight_attacks();
 void init_rook_attacks();
 void init_pawn_attacks();
+
+int lsb(BitBoard bb);
+int msb(BitBoard bb);

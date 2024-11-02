@@ -3,10 +3,8 @@
 #include <stdio.h>
 
 int main() {
-	init_distances();
-	init_king_attacks();
-	init_rook_attacks();
+	init_attacks();
 	BitBoard bb = EMPTY_BOARD;	
 	bb = set_position(bb, C6);
-	board_print(ROOK_ATTACKS[A1]);
+	board_print(BISHOP_ATTACKS[C4]);
 }

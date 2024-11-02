@@ -2,7 +2,8 @@
 #include <stdio.h>
 
 int main() {
-	BitBoard bb = 0x00;	
+	init_distances();
+	BitBoard bb = 0ull;	
 	bb = set_position(bb, C6);
 	board_print(bb);
 }

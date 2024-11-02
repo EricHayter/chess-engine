@@ -11,6 +11,31 @@ typedef enum {
 	A1, B1, C1, D1, E1, F1, G1, H1,
 } Position;
 
+typedef enum {
+	WHITE,
+	BLACK,
+} Color;
+
+typedef enum {
+	KING,
+	QUEEN,
+	BISHOP,
+	KNIGHT,
+	ROOK,
+	PAWN,
+} PieceType;
+
+// What is the absolute distances between two positions?
+extern int distances_init;
+extern int DISTANCES[64][64];
+
+// absolute value function
+int abs(int x);
+int max(int x, int y);
+int row(Position p);
+int col(Position p);
+void init_distances();
+
 // Using a 64 bit word to represent occupancy
 // MSB will represent H1 and LSB will be A8
 typedef unsigned long long BitBoard;

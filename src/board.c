@@ -1,19 +1,23 @@
 #include "board.h"
-
 #include <stdio.h>
+
+BitBoard set_position(BitBoard bb, Position pos)
+{
+	return bb | 1 << pos;
+}
 
 void board_print(BitBoard bb)
 {
 	for (int i = 0; i < 8; i++) {
 		printf("%d  ", 8 - i);
 		for (int j = 0; j < 8; j++) {
-			if (bb << (i * 8 + j) & 1)
-				printf("1");
+			if (bb & 1 << (i * 8 + j))
+				printf("1 ");
 			else
-				printf("0");
+				printf("0 ");
 		}
 		printf("\n");
 	}
-	printf("   ABCDEFGH");
-	printf("   Bitboard: %llu", bb);
+	printf("\n   A B C D E F G H\n");
+	printf("   Bitboard: %llu\n", bb);
 }

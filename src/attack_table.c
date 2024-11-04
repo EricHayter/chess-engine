@@ -1,10 +1,25 @@
-#include "moves.h"
+#include "attack_table.h"
 #include "assert.h"
 #include "board.h"
 
 const Direction DIRECTIONS[NUM_DIRECTIONS] = {
 	NORTH, NORTH_EAST, EAST, SOUTH_EAST, 
 	SOUTH, SOUTH_WEST, WEST, NORTH_WEST
+};
+
+const int ROOK_DIRECTIONS[NUM_ROOK_DIRECTIONS] = {
+	NORTH, EAST, SOUTH, WEST,	
+};
+
+const int BISHOP_DIRECTIONS[NUM_BISHOP_DIRECTIONS] = {
+	NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST,	
+};
+
+const int KNIGHT_DIRECTIONS[NUM_KNIGHT_DIRECTIONS] = {
+	NORTH + NORTH_EAST, NORTH + NORTH_WEST,
+	EAST + NORTH_EAST, NORTH + SOUTH_EAST,	
+	SOUTH + SOUTH_EAST, SOUTH + SOUTH_WEST,
+	WEST + NORTH_WEST, NORTH + SOUTH_WEST	
 };
 
 int king_attacks_calculated = 0;
@@ -15,13 +30,13 @@ int rook_attacks_calculated = 0;
 int pawn_attacks_calculated = 0;
 
 BitBoard KING_ATTACKS[NUM_SQUARES];
-BitBoard QUEEN_ATTACKS[NUM_SQUARES];
-BitBoard BISHOP_ATTACKS[NUM_SQUARES];
+BitBoard QUEEN_ATTACKS[NUM_SQUARES][NUM_QUEEN_DIRECTIONS];
+BitBoard BISHOP_ATTACKS[NUM_SQUARES][NUM_BISHOP_DIRECTIONS];
 BitBoard KNIGHT_ATTACKS[NUM_SQUARES];
-BitBoard ROOK_ATTACKS[NUM_SQUARES];
+BitBoard ROOK_ATTACKS[NUM_SQUARES][NUM_ROOK_DIRECTIONS];
 BitBoard PAWN_ATTACKS[NUM_COLORS][NUM_SQUARES];
 
-int is_good_square(Position start, Position stop)
+int is_good_square(Square start, Square stop)
 {
 	return 
 		stop < 64 &&
@@ -50,9 +65,9 @@ void init_king_attacks()
 	for (int start = 0; start < NUM_SQUARES; start++) {
 		BitBoard bb = EMPTY_BOARD;
 		for (int dir = 0; dir < NUM_DIRECTIONS; dir++) {
-			Position end = start + DIRECTIONS[dir];	
+			Square end = start + DIRECTIONS[dir];	
 			if (is_good_square(start, end))
-				bb = set_position(bb, end);
+				bb = set_square(bb, end);
 		}	
 		KING_ATTACKS[start] = bb;
 	}
@@ -67,8 +82,15 @@ void init_queen_attacks()
 	assert(rook_attacks_calculated);
 	if (queen_attacks_calculated)
 		return;
-	for (int i = 0; i < NUM_SQUARES; i++)
-		QUEEN_ATTACKS[i] = BISHOP_ATTACKS[i] | ROOK_ATTACKS[i];
+	for (int i = 0; i < NUM_SQUARES; i++) {
+		for (int dir_num = 0; dir_num < NUM_QUEEN_DIRECTIONS; dir_num++) {
+			if (dir_num % 2)
+				QUEEN_ATTACKS[i][dir_num] = BISHOP_ATTACKS[i][dir_num / 2];	
+			else
+				QUEEN_ATTACKS[i][dir_num] = ROOK_ATTACKS[i][dir_num / 2];	
+		}	
+	}
+
 	queen_attacks_calculated = 1;
 }
 
@@ -78,9 +100,6 @@ void init_bishop_attacks()
 	assert(distances_init);
 	if (bishop_attacks_calculated)
 		return;
-	static const int BISHOP_DIRECTIONS[NUM_BISHOP_DIRECTIONS] = {
-		NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST,	
-	};
 
 	// ensure that our distance lookup table is setup
 	assert(distances_init);
@@ -88,30 +107,24 @@ void init_bishop_attacks()
 		return;
 
 	for (int start = 0; start < NUM_SQUARES; start++) {
-		BitBoard bb = EMPTY_BOARD;
 		for (int dir_num = 0; dir_num < NUM_BISHOP_DIRECTIONS; dir_num++) {
+			BitBoard bb = EMPTY_BOARD;
 			Direction dir = BISHOP_DIRECTIONS[dir_num];
-			Position pos = start;
-			Position next_pos = start + dir;			
+			Square pos = start;
+			Square next_pos = start + dir;			
 			while (is_good_square(pos, next_pos)) {
-				bb = set_position(bb, next_pos);	
+				bb = set_square(bb, next_pos);	
 				pos = next_pos;
 				next_pos += dir;
 			}
+			BISHOP_ATTACKS[start][dir_num] = bb;
 		}	
-		BISHOP_ATTACKS[start] = bb;
 	}
 	bishop_attacks_calculated = 1;
 }
 
 void init_knight_attacks()
 {
-	static const int KNIGHT_DIRECTIONS[NUM_KNIGHT_DIRECTIONS] = {
-		NORTH + NORTH_EAST, NORTH + NORTH_WEST,
-		EAST + NORTH_EAST, NORTH + SOUTH_EAST,	
-		SOUTH + SOUTH_EAST, SOUTH + SOUTH_WEST,
-		WEST + NORTH_WEST, NORTH + SOUTH_WEST	
-	};
 
 	// ensure that our distance lookup table is setup
 	assert(distances_init);
@@ -121,9 +134,9 @@ void init_knight_attacks()
 	for (int start = 0; start < NUM_SQUARES; start++) {
 		BitBoard bb = EMPTY_BOARD;
 		for (int dir = 0; dir < NUM_KNIGHT_DIRECTIONS; dir++) {
-			Position stop = start + KNIGHT_DIRECTIONS[dir];
+			Square stop = start + KNIGHT_DIRECTIONS[dir];
 			if (is_good_square(start, stop))
-				bb = set_position(bb, stop);
+				bb = set_square(bb, stop);
 		}
 		KNIGHT_ATTACKS[start] = bb;
 	}
@@ -132,9 +145,6 @@ void init_knight_attacks()
 
 void init_rook_attacks()
 {
-	static const int ROOK_DIRECTIONS[NUM_ROOK_DIRECTIONS] = {
-		NORTH, EAST, SOUTH, WEST,	
-	};
 
 	// ensure that our distance lookup table is setup
 	assert(distances_init);
@@ -142,18 +152,18 @@ void init_rook_attacks()
 		return;
 
 	for (int start = 0; start < NUM_SQUARES; start++) {
-		BitBoard bb = EMPTY_BOARD;
 		for (int dir_num = 0; dir_num < NUM_ROOK_DIRECTIONS; dir_num++) {
+			BitBoard bb = EMPTY_BOARD;
 			Direction dir = ROOK_DIRECTIONS[dir_num];
-			Position pos = start;
-			Position next_pos = start + dir;			
+			Square pos = start;
+			Square next_pos = start + dir;			
 			while (is_good_square(pos, next_pos)) {
-				bb = set_position(bb, next_pos);	
+				bb = set_square(bb, next_pos);	
 				pos = next_pos;
 				next_pos += dir;
 			}
+			ROOK_ATTACKS[start][dir_num] = bb;
 		}	
-		ROOK_ATTACKS[start] = bb;
 	}
 	rook_attacks_calculated = 1;
 }
@@ -169,9 +179,9 @@ void init_pawn_attacks()
 	for (int start = 0; start < NUM_SQUARES; start++) {
 		BitBoard bb = EMPTY_BOARD;
 		if (is_good_square(start, start + SOUTH_EAST))
-			bb = set_position(bb, start + SOUTH_EAST);
+			bb = set_square(bb, start + SOUTH_EAST);
 		if (is_good_square(start, start + SOUTH_WEST))
-			bb = set_position(bb, start + SOUTH_WEST);
+			bb = set_square(bb, start + SOUTH_WEST);
 		PAWN_ATTACKS[BLACK][start] = bb;
 	}
 
@@ -179,9 +189,9 @@ void init_pawn_attacks()
 	for (int start = 0; start < NUM_SQUARES; start++) {
 		BitBoard bb = EMPTY_BOARD;
 		if (is_good_square(start, start + NORTH_EAST))
-			bb = set_position(bb, start + NORTH_EAST);
+			bb = set_square(bb, start + NORTH_EAST);
 		if (is_good_square(start, start + NORTH_WEST))
-			bb = set_position(bb, start + NORTH_WEST);
+			bb = set_square(bb, start + NORTH_WEST);
 		PAWN_ATTACKS[WHITE][start] = bb;
 	}
 	pawn_attacks_calculated = 1;

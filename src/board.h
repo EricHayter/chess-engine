@@ -16,7 +16,7 @@ typedef enum {
 	A2, B2, C2, D2, E2, F2, G2, H2,
 	A1, B1, C1, D1, E1, F1, G1, H1,
 	NUM_SQUARES,
-} Position;
+} Square;
 
 typedef enum {
 	WHITE,
@@ -35,8 +35,12 @@ typedef enum {
 } PieceType;
 
 typedef struct {
+	Color to_move;
 	BitBoard occupancy[NUM_PIECE_TYPES * NUM_COLORS];	
-} Board;
+	// en pessant
+	// castling
+	// 50 move rule
+} Position;
 
 // What is the absolute distances between two positions?
 extern int distances_init;
@@ -45,12 +49,12 @@ extern int DISTANCES[64][64];
 // absolute value function
 int abs(int x);
 int max(int x, int y);
-int row(Position p);
-int col(Position p);
+int row(Square p);
+int col(Square p);
 void init_distances();
 
 
-BitBoard set_position(BitBoard bb, Position pos);
-BitBoard clear_position(BitBoard bb, Position pos);
+BitBoard set_square(BitBoard bb, Square pos);
+BitBoard clear_position(BitBoard bb, Square pos);
 
 void board_print(BitBoard bb);

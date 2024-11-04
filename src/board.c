@@ -6,8 +6,8 @@ int DISTANCES[64][64];
 
 int abs(int x) { return x >= 0 ? x : -x; }
 int max(int x, int y) { return x >= y ? x : y; };
-int row(Position p) { return 8 - p / 8; };
-int col(Position p) { return p % 8 + 1; };
+int row(Square sq) { return 8 - sq / 8; };
+int col(Square sq) { return sq % 8 + 1; };
 void init_distances()
 {
 	distances_init = 1;
@@ -20,9 +20,9 @@ void init_distances()
 
 
 
-BitBoard set_position(BitBoard bb, Position pos)
+BitBoard set_square(BitBoard bb, Square sq)
 {
-	return bb | 1ull << pos;
+	return bb | 1ull << sq;
 }
 
 void board_print(BitBoard bb)

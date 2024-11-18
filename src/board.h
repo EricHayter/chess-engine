@@ -36,11 +36,20 @@ typedef enum {
 
 typedef struct {
 	Color to_move;
-	BitBoard occupancy[NUM_PIECE_TYPES * NUM_COLORS];	
+	
+	// occupancy for each piecetype and color
+	BitBoard piece_occupancy[NUM_PIECE_TYPES * NUM_COLORS];	
+
+	// total occupancy for each color
+	BitBoard all_occupancy[NUM_COLORS];
+
+	// Bitboard representing the vacant squares on the board
+	BitBoard vacant_squares;
+
 	// en pessant
 	// castling
 	// 50 move rule
-} Position;
+} Game;
 
 // What is the absolute distances between two positions?
 extern int distances_init;
